@@ -114,7 +114,7 @@ EA=0;
 
 EA=1;
     while (1) {
-        
+        EA=1;
 
        if ((PWM_FLAG==1)&&(PTC_FLAG==1)) PTC=1;else PTC=0;
        //if ((MOTOR_FLAG==1)) Vibration_motor=1;else Vibration_motor=0;
