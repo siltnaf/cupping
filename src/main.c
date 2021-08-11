@@ -7,5 +7,6 @@ void main(void)
 UART1_config();
 #endif
 
+
 Start();
 }
