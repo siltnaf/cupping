@@ -1,48 +1,20 @@
 
 #include <start.h>
 unsigned char PWM_ON; //定义按键时间
-volatile char PWM_Time,PWM_FLAG, PTC_FLAG, MOTOR_FLAG;
-
-volatile u16 PWM_low,PWM_high,PWM;
-
-
 #define	Timer0_Reload	(MAIN_Fosc / 100)//Timer 0 中断频率, 100次/秒
-#define T2KHZ       (65536- MAIN_Fosc/12/6000)     //Timer2
-
-
 #define Power_switch P1_5
 #define Pump_motor P5_4
 #define  PTC P5_5
-#define  Vibration_motor P3_0
-#define  Valve P3_1
-
-
-
-
-#define     PWM_DUTY        6000            //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
-#define 	PWM_DUTY1		4000
-#define     PWM_DUTY2		5000
-#define     PWM_HIGH_MIN    32              //??PWM????????????????
-#define     PWM_HIGH_MAX    (PWM_DUTY-PWM_HIGH_MIN) //??PWM????????????????
-
-
+#define  Vibration_motor P5_4
+#define  Valve P5_5
+unsigned char unicode_number[4]={0};
+unsigned char consumer_number[]=""; 
+unsigned char button_number[]="";
 //hx711通道；
-union 
-{
-	unsigned char A128 ;
-	unsigned char B32 ;
-    unsigned char A64 ;/*channel data */
-}channel;
 
-//program level
-enum level
-{
-    Level0=0,
-    Level1=1,
-    Level2=2
-} Program_level;
-
-
+ const unsigned char A128=24 ;
+ const unsigned char B32=25 ;
+const unsigned char A64=26 ;/*channel data */
 
  //自定义枚举4个按键按下时的值；发热键，电源键，气泵键，振动键
 enum Key
@@ -62,11 +34,16 @@ unsigned int which_press:8;
 unsigned int long_press:4;
 unsigned int long_press_state:1;
 }HTI_button;
+
+//Sensor_init
+struct sensor
+{
+unsigned long pressure;
+unsigned long ntc;
+}HTI_sensor;
+
 //初始化按键
 HTI_button copping_button;
-
-
-
 void DeviceInit(void)
 {
 //变量初始化
@@ -79,88 +56,79 @@ void DeviceInit(void)
 PWM_ON=0;//按键延时
 TR0 = 0;	//停止计数
 ET0 = 0;	//停止计数中断
-//hx711通道初始化
-channel.A128=24;//A通道128
-channel.B32=25;//B通道32
-channel.A64=26;//A通道64
-
-
-
 }
 
 void Start(void)
 {
 
 	P0M1 = 0;	P0M0 = 0;	//设置为准双向口
-	P1M1 = 0;	P1M0 = 0x20;	//设置为准双向口
+	P1M1 = 0;	P1M0 = 0x30;	//设置为准双向口
 	P2M1 = 0;	P2M0 = 0;	//设置为准双向口
     P3M1 = 0;	P3M0 = 0x03;	//设置为准双向口
 	P4M1 = 0;	P4M0 = 0;	//设置为准双向口
 	P5M1 = 0;	P5M0 = 0x30;	//设置为准双向口
-   
-
-
-  DeviceInit(); 
-
+    	
 Int0_init();
 Int1_init();
 Int2_init();
 Int3_init();
 
-
-
-
 display(0x00,GIRD2);
-HX711_Read(channel.B32);
-MOTOR_FLAG=0;
-PTC_FLAG=0;
-
 
 #if(Seril_Debug==1) 
 Send1_String("STC15W204S\r\nUart is ok !\r\n");//发送字符串检测是否初始化成功
 Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n");//发送字符串检测是否初始化成功
 #endif
-
 EA=0;
-
+DeviceInit();
 EA=1;
+
     while (1) {
-        EA=1;
 
-       if ((PWM_FLAG==1)&&(PTC_FLAG==1)) PTC=1;else PTC=0;
-       //if ((MOTOR_FLAG==1)) Vibration_motor=1;else Vibration_motor=0;
+     HTI_sensor.pressure=(HX711_Read(25)&0x00ffffff);
 
+       gn1616_ms(500);
+       unicode_number[3]=HTI_sensor.pressure;
+      // send1_Byte(unicode_number[0]);
+       unicode_number[2]=HTI_sensor.pressure>>8;
+    //send1_Byte(unicode_number[1]);
+       unicode_number[1]=HTI_sensor.pressure>>16;
+       // send1_Byte(unicode_number[2]);
+       unicode_number[0]=HTI_sensor.pressure>>24;
+        //  send1_Byte(unicode_number[3]);
+       HexToAscii(unicode_number, consumer_number, 4);
+       Send1_String("\r\nL+Hpressure=");//发送气压传感器 低 8位
+       Send1_String(consumer_number);
 
        if(copping_button.stat)//按键中断flag;
        {
         EA=0;
-        #if(Seril_Debug==1) 
-        Send1_String("copping_=1\r\n");//有按键操作发送字符
-        Send1_String("Button\r\n");//发送按键值
-        send1_Byte(copping_button.which_press);
-        #endif
-           copping_button.stat=0;
-           copping_button.which_press=Key_pressed;
-              
+        copping_button.stat=0;
+        copping_button.which_press=Key_pressed;
       
+        #if(Seril_Debug==1) 
+        //这里定义的数组是将16进制的数转换为字符输出，方便打印调试
+        Send1_String("\r\nButton=");//发送按键值
+        button_number[0]=copping_button.which_press;
+        HexToAscii(button_number, button_number, 1); 
+        Send1_String(button_number);
 
+        #endif
 
+ 
+        
            switch(copping_button.which_press)
            {
         
             case PTC_button:
               // PTC_LED=!PTC_LED;
-                PWM=2000;
-                LoadPWM(PWM);
-                Timer2_init();
-               PTC_FLAG=!PTC_FLAG;//启动PTC加热
-               if(PTC_FLAG) display(0xf0,GIRD2);
-                else display(0x00,GIRD2);
+            
+               PTC=!PTC;//启动PTC加热
+               if(PTC) display(0xf0,GIRD1);
+                else display(0x00,GIRD1);
                break;
             case Vibration_button:
               // Vibration_LED=!Vibration_LED;
-
-             
                Vibration_motor=!Vibration_motor;
                if(!Vibration_motor)
                display(0x0f,GIRD1);
@@ -170,8 +138,8 @@ EA=1;
               // Pump_LED=!Pump_LED;
               
                Pump_motor=!Pump_motor;//启动气泵开关
-               if(Pump_motor) display(0xf0,GIRD1);
-               else display(0x00,GIRD1);
+               if(Pump_motor) display(0xf0,GIRD2);
+               else display(0x00,GIRD2);
                break;
             case Power_button:
                //Power_LED=!Power_LED;
@@ -210,41 +178,14 @@ EA=1;
   {
   EA=0;
 Pump_motor=0;
-
-Pump_motor=0;
-Vibration_motor=1;
-PTC=0;
-Valve=1;
-
-
-MOTOR_FLAG=0;
-PTC_FLAG=0;
-
 copping_button.long_press_state=0;//reset press long time flag;
 Power_switch=!Power_switch;//trun on the power switch;
 if(Power_switch)
-{
-    display(0xff,GIRD1);
-    display(0xff,GIRD2);
-    delay_ms(3000);
-    display(0x00,GIRD1);
-    display(0x00, GIRD2);
-
-    }
+{display(0xff,GIRD1);display(0xff,GIRD2);}
 else 
 {
 display(0x00,GIRD1);
 display(0x00,GIRD2);
-EA=1;
-EX1=0;
-WAKE_CLKO &= 0xef;
-WAKE_CLKO &= 0xdf;
-PCON|=0x02;  //sleep mode
-
-WAKE_CLKO |= 0x20;
-WAKE_CLKO |= 0x10;
-EX1=1;		
-
 }
 #if(Seril_Debug==1) 
 Send1_String("long_press_state=1\r\n");//发送字符串检测是否初始化成功
@@ -308,46 +249,6 @@ if(copping_button.long_press>3)
 
 }
 
-
-
-void PWMTimer(void)__interrupt TIMER2_VECTOR
-{
-	PWM_FLAG =!PWM_FLAG;
-   
-
-    if (PWM_FLAG == 1)
-   {
-
-        T2H = (PWM_low >> 8); //LED on time is 10%
-        T2L = PWM_low;
-    }
-    else
-    {
-
-        T2H = (PWM_high >> 8); //LED off time is 90%
-        T2L = PWM_high;
-    }
-}
-
-
-void    LoadPWM(u16 i)
-{
-    u16 j;
-		AUXR &= ~(1<<4);    //stop counter
-    if(i > PWM_HIGH_MAX)        i = PWM_HIGH_MAX;   //max range for PWM
-    if(i < PWM_HIGH_MIN)        i = PWM_HIGH_MIN;   //min range for PWM
-    j = 65536UL - PWM_DUTY + i; //low value for PWM
-    i = 65536UL - i;            //high value for PWM
-//    EA = 0;
-    PWM_high = i;   //
-    PWM_low  = j;   //
-		PWM_Time=0;
-	//	EA=1;
-}
-
-
-
-
 /********************* INT0中断函数 *************************/
 void INT0_int(void)__interrupt INT0_VECTOR		//进中断时已经清除标志
 {
@@ -379,10 +280,6 @@ void INT2_int(void)__interrupt INT2_VECTOR		//进中断时已经清除标志
 	//EX1 = 0;	//INT1 Disable
 	//IE1 = 0;	//外中断1标志位
 }
-
-
-
-
 /********************* INT2中断函数 *************************/
 void INT3_int(void)__interrupt INT3_VECTOR		//进中断时已经清除标志
 {
@@ -461,22 +358,3 @@ void	Timer0_init(void)
 		#error "Timer0设置的中断过慢!"
 	#endif
 }
-
-void Timer2_init(void)
-{
-	AUXR &= ~(1<<4);    //stop counter
-    IE2  |=  (1<<2);    //enable timer2 interrupt
-    AUXR |=  (1<<2);    //set 1T
-    AUXR &= ~(1<<3);    //set timer mode
-//    INT_CLKO |=  0x04;  //output clock
-
-    T2H = 0;
-    T2L = 0;
-    AUXR |=  (1<<4);    //start timer2
-
-}                                                   
-      	
-
-
-
-
