@@ -12,6 +12,7 @@ typedef unsigned int u16;
 #include "gn1616.h"
 #include "init.h"
 #include "interrupt.h"
+#include "process.h"
 
 #if (Seril_Debug == 1)
 #include "uart.h"
@@ -43,6 +44,7 @@ typedef struct Button_Setting
     unsigned int which_press : 8;
     unsigned int long_press : 4;
     unsigned int long_press_state : 1;
+    unsigned char debounce;
 } Button_Status;
 
 //program setting
@@ -68,7 +70,6 @@ typedef enum Button_type
 typedef struct PWM_Setting
 {
     unsigned char on:1;
-    unsigned char timer:4;
     unsigned int low;
     unsigned int high;
     unsigned int value;
@@ -78,7 +79,7 @@ typedef struct PWM_Setting
 void Start(void);
 
 
-extern unsigned char PWM_ON; //定义按键时间
+
 
 //初始化按键
 extern Button_Status Key;

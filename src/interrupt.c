@@ -4,17 +4,17 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR
 {
 
     if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
-        PWM_ON++;
+        Key.debounce++;
     else
     {
         Key.service = 0;
-        PWM_ON = 0;
+        Key.debounce = 0;
         TR0 = 0; //停止计数
         ET0 = 0; //停止计数中断
         Key.long_press = 0;
     }
 
-    if (PWM_ON % 20 == 0)
+    if (Key.debounce % 20 == 0)
     {
         if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
             Key.long_press++;
@@ -25,7 +25,7 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR
             // IO_PTC_LED=!IO_PTC_LED;
             Key.long_press = 0;
             Key.long_press_state = 0;
-            PWM_ON = 0;
+            Key.debounce = 0;
             TR0 = 0; //停止计数
             ET0 = 0; //停止计数中断
         }
@@ -36,7 +36,7 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR
             //  Pump_LED=!Pump_LED;
             Key.long_press = 0;
             Key.long_press_state = 1;
-            PWM_ON = 0;
+            Key.debounce = 0;
             TR0 = 0; //停止计数
             ET0 = 0; //停止计数中断
         }

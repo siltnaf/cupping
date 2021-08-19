@@ -55,7 +55,7 @@ void DeviceInit(void)
     Suction.on = 0;
     Heating.on = 0;
 
-    PWM_ON = 0; //按键延时
+    Key.debounce = 0; //按键延时
     TR0 = 0;    //停止计数
     ET0 = 0;    //停止计数中断
 

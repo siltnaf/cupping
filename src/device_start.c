@@ -55,11 +55,8 @@ void Start(void)
     while (1)
     {
         EA = 1;
-
-        if ((PWM.on == 1) && (Heating.on == 1))
-            IO_PTC = 1;
-        else
-            IO_PTC = 0;
+        IO_handler();
+        
         //if ((MOTOR_FLAG==1)) IO_Vibration=1;else IO_Vibration=0;
 
         if (Key.service) //按键中断flag;
