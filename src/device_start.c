@@ -1,7 +1,7 @@
 
 #include <start.h>
 unsigned char PWM_ON; //定义按键时间
-volatile char PWM_Time,PWM_FLAG, PTC_FLAG, MOTOR_FLAG;
+volatile char PWM_Time,PWM_FLAG;
 
 volatile u16 PWM_low,PWM_high,PWM;
 
@@ -35,12 +35,23 @@ union
 }channel;
 
 //program level
-enum level
+enum Program_level
 {
     Level0=0,
     Level1=1,
     Level2=2
-} Program_level;
+} Level;
+
+//program setting
+typedef struct Program_Setting
+{
+unsigned char flag:1;
+unsigned char level:2;
+unsigned char time:4;
+}HTI_Setting;
+
+HTI_Setting power_btn, vibration_btn, suction_btn, heating_btn;
+
 
 
 
@@ -69,29 +80,10 @@ HTI_button copping_button;
 
 void DeviceInit(void)
 {
-//变量初始化
-    Pump_motor=0;
-    Vibration_motor=1;
-    PTC=0;
-    Valve=1;
-    Power_switch=0;
-    copping_button.stat=0;
-PWM_ON=0;//按键延时
-TR0 = 0;	//停止计数
-ET0 = 0;	//停止计数中断
-//hx711通道初始化
-channel.A128=24;//A通道128
-channel.B32=25;//B通道32
-channel.A64=26;//A通道64
 
+//IO init
 
-
-}
-
-void Start(void)
-{
-
-	P0M1 = 0;	P0M0 = 0;	//设置为准双向口
+    P0M1 = 0;	P0M0 = 0;	//设置为准双向口
 	P1M1 = 0;	P1M0 = 0x20;	//设置为准双向口
 	P2M1 = 0;	P2M0 = 0;	//设置为准双向口
     P3M1 = 0;	P3M0 = 0x03;	//设置为准双向口
@@ -99,8 +91,25 @@ void Start(void)
 	P5M1 = 0;	P5M0 = 0x30;	//设置为准双向口
    
 
+//变量初始化
+    Pump_motor=0;
+    Vibration_motor=1;
+    PTC=0;
+    Valve=1;
+    Power_switch=0;
 
-  DeviceInit(); 
+
+copping_button.stat=0;
+suction_btn.flag=0;
+heating_btn.flag=0;
+PWM_ON=0;//按键延时
+TR0 = 0;	//停止计数
+ET0 = 0;	//停止计数中断
+
+//hx711通道初始化
+channel.A128=24;//A通道128
+channel.B32=25;//B通道32
+channel.A64=26;//A通道64
 
 Int0_init();
 Int1_init();
@@ -108,12 +117,17 @@ Int2_init();
 Int3_init();
 
 
+}
+
+void Start(void)
+{
+
+DeviceInit(); 
 
 
 display(0x00,GIRD2);
 HX711_Read(channel.B32);
-MOTOR_FLAG=0;
-PTC_FLAG=0;
+
 
 
 #if(Seril_Debug==1) 
@@ -121,13 +135,11 @@ Send1_String("STC15W204S\r\nUart is ok !\r\n");//发送字符串检测是否初�
 Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n");//发送字符串检测是否初始化成功
 #endif
 
-EA=0;
-
 EA=1;
     while (1) {
         EA=1;
 
-       if ((PWM_FLAG==1)&&(PTC_FLAG==1)) PTC=1;else PTC=0;
+       if ((PWM_FLAG==1)&&(heating_btn.flag==1)) PTC=1;else PTC=0;
        //if ((MOTOR_FLAG==1)) Vibration_motor=1;else Vibration_motor=0;
 
 
@@ -153,8 +165,8 @@ EA=1;
                 PWM=2000;
                 LoadPWM(PWM);
                 Timer2_init();
-               PTC_FLAG=!PTC_FLAG;//启动PTC加热
-               if(PTC_FLAG) display(0xf0,GIRD2);
+               heating_btn.flag=!heating_btn.flag;//启动PTC加热
+               if(heating_btn.flag==1) display(0xf0,GIRD2);
                 else display(0x00,GIRD2);
                break;
             case Vibration_button:
@@ -217,8 +229,8 @@ PTC=0;
 Valve=1;
 
 
-MOTOR_FLAG=0;
-PTC_FLAG=0;
+suction_btn.flag=0;
+heating_btn.flag=0;
 
 copping_button.long_press_state=0;//reset press long time flag;
 Power_switch=!Power_switch;//trun on the power switch;
