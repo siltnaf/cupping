@@ -55,13 +55,16 @@ void Start(void)
     while (1)
     {
         EA = 1;
-        IO_handler();
+        
         
         //if ((MOTOR_FLAG==1)) IO_Vibration=1;else IO_Vibration=0;
 
         if (Key.service) //按键中断flag;
         {
             EA = 0;
+
+            IO_handler();
+            Display_handler();
 #if (Seril_Debug == 1)
             Send1_String("copping_=1\r\n"); //有按键操作发送字符
             Send1_String("Button\r\n");     //发送按键值
@@ -79,37 +82,25 @@ void Start(void)
                 LoadPWM(PWM.value);
                 Timer2_init();
                 Heating.on = !Heating.on; //启动IO_PTC加热
-                if (Heating.on == 1)
-                    display(0xf0, GIRD2);
-                else
-                    display(0x00, GIRD2);
+                
                 break;
             case Key_Vibration:
                 // Vibration_LED=!Vibration_LED;
 
                 IO_Vibration = !IO_Vibration;
-                if (!IO_Vibration)
-                    display(0x0f, GIRD1);
-                else
-                    display(0x00, GIRD1); /* code */
+                
                 break;
             case Key_Pump:
                 // Pump_LED=!Pump_LED;
 
                 IO_Pump = !IO_Pump; //启动气泵开关
-                if (IO_Pump)
-                    display(0xf0, GIRD1);
-                else
-                    display(0x00, GIRD1);
+               
                 break;
             case Key_Power:
                 //Power_LED=!Power_LED;
                 display(0x0f, GIRD2);
                 IO_Valve = !IO_Valve;
-                if (!IO_Valve)
-                    display(0x0f, GIRD2);
-                else
-                    display(0x00, GIRD2);
+               
                 break;
                 // -------------------------------
                 // Default event handler.
