@@ -117,6 +117,10 @@ Int2_init();
 Int3_init();
 
 
+#if(Seril_Debug==0) 
+Timer2_init();     //use timer2 for PWM if UART is not use for debug
+#endif
+
 }
 
 void Start(void)
