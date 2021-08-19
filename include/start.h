@@ -1,39 +1,90 @@
 #ifndef __START_H
 #define __START_H
 typedef unsigned char u8;
-typedef unsigned int	u16;
+typedef unsigned int u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
 #define Seril_Debug 0
 
 #include "stc12.h"
 #include "8051.h"
-
 #include "delay.h"
 #include "hx711.h"
 #include "gn1616.h"
-#if(Seril_Debug==1) 
+#include "init.h"
+#include "interrupt.h"
+
+#if (Seril_Debug == 1)
 #include "uart.h"
-void UART1_Interrupt(void)__interrupt UART1_VECTOR;
+void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #endif
-void DeviceInit(void);
+
+//
+
+#define Timer0_Reload (MAIN_Fosc / 100)       //Timer 0 中断频率, 100次/秒
+#define T2KHZ (65536 - MAIN_Fosc / 12 / 6000) //Timer2
+
+#define IO_Power P1_5
+#define IO_Pump P5_4
+#define IO_PTC P5_5
+#define IO_Vibration P3_0
+#define IO_Valve P3_1
+
+#define PWM_DUTY 6000 //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
+#define PWM_DUTY1 4000
+#define PWM_DUTY2 5000
+#define PWM_HIGH_MIN 32                        //??PWM????????????????
+#define PWM_HIGH_MAX (PWM_DUTY - PWM_HIGH_MIN) //??PWM????????????????
+
+//自定义一个int结构体位域来解析按键：单次，双击，长按，等功能
+typedef struct Button_Setting
+{
+    unsigned int service : 1;
+    unsigned int times : 2;
+    unsigned int which_press : 8;
+    unsigned int long_press : 4;
+    unsigned int long_press_state : 1;
+} Button_Status;
+
+//program setting
+typedef struct Program_Setting
+{
+    unsigned char on : 1;
+    unsigned char level : 2;
+    unsigned char timer : 4;
+} Level;
+
+//define 4 buttons
+typedef enum Button_type
+{
+    Key_Power,     //0x00
+    Key_Pump,      //0x01
+    Key_Vibration, //0x02
+    Key_PTC        //0x03
+
+} Button_type;
+
+
+
+typedef struct PWM_Setting
+{
+    unsigned char on:1;
+    unsigned char timer:4;
+    unsigned int low;
+    unsigned int high;
+    unsigned int value;
+} PWM_Status;
+
+
 void Start(void);
-void Timer0_init(void);
-void Timer2_init(void);
-void Int0_init(void);
-void Int1_init(void);
-void Int2_init(void);
-void Int3_init(void);
-void LoadPWM(u16 i);
-void KeyTimer(void) __interrupt TIMER0_VECTOR;
-void PWMTimer(void) __interrupt TIMER2_VECTOR;
-void INT0_int(void) __interrupt INT0_VECTOR;
-void INT1_int(void) __interrupt INT1_VECTOR;
-void INT2_int(void) __interrupt INT2_VECTOR;
-void INT3_int(void) __interrupt INT3_VECTOR;
-extern volatile char PWM_Time,PWM_Time,PWM_FLAG, PTC_FLAG, MOTOR_FLAG;
-extern volatile u16 PWM_low,PWM_high,PWM;
 
 
+extern unsigned char PWM_ON; //定义按键时间
+
+//初始化按键
+extern Button_Status Key;
+extern Level Power, Vibration, Suction, Heating;
+extern Button_type Key_pressed;
+extern PWM_Status PWM;
 
 
 #endif
