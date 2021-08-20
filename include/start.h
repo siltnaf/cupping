@@ -30,6 +30,8 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define IO_Vibration P3_0
 #define IO_Valve P3_1
 
+#define Max_key 3
+
 #define PWM_DUTY 6000 //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
 #define PWM_DUTY1 4000
 #define PWM_DUTY2 5000
@@ -39,7 +41,7 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 //自定义一个int结构体位域来解析按键：单次，双击，长按，等功能
 typedef struct Button_Setting
 {
-    unsigned int service : 1;
+    unsigned int update : 1;
     unsigned int times : 2;
     unsigned int which_press : 8;
     unsigned int long_press : 4;
@@ -51,8 +53,9 @@ typedef struct Button_Setting
 typedef struct Program_Setting
 {
     unsigned char on : 1;
-    unsigned char level : 2;
+    unsigned char level : 3;
     unsigned char timer : 4;
+
 } Level;
 
 //define 4 buttons
@@ -66,6 +69,19 @@ typedef enum Button_type
 } Button_type;
 
 
+//State machine
+typedef enum State_name
+{
+    idle_mode ,
+    normal_mode ,
+    Timer_mode ,
+    Power_down,
+    BT_mode,
+
+} State_name;
+
+
+
 
 typedef struct PWM_Setting
 {
@@ -74,6 +90,19 @@ typedef struct PWM_Setting
     unsigned int high;
     unsigned int value;
 } PWM_Status;
+
+
+
+typedef struct Timer_Setting
+{
+    unsigned char update:1;
+    unsigned char blink:1;
+    unsigned char sec:6;
+    unsigned char min;
+    unsigned int  count;
+} Timer_Status;
+
+
 
 
 void Start(void);
@@ -86,6 +115,7 @@ extern Button_Status Key;
 extern Level Power, Vibration, Suction, Heating;
 extern Button_type Key_pressed;
 extern PWM_Status PWM;
-
+extern Timer_Status Time;
+extern State_name pre_state,next_state;
 
 #endif

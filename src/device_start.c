@@ -13,6 +13,8 @@ enum Setting_level
     Level2 = 2
 } Levels;
 
+
+
 //hx711通道；
 union
 {
@@ -25,8 +27,8 @@ Button_type Key_pressed;
 Button_Status Key; //初始化按键
 Level Power, Vibration, Suction, Heating;
 PWM_Status PWM;
-
-
+Timer_Status Time;
+State_name pre_state,next_state;
 
 
 
@@ -55,118 +57,33 @@ void Start(void)
     while (1)
     {
         EA = 1;
-        
+        if (Time.update) Time_handler();
         
         //if ((MOTOR_FLAG==1)) IO_Vibration=1;else IO_Vibration=0;
 
-        if (Key.service) //按键中断flag;
+        if ((Key.update)||(Key.long_press_state)) //按键中断flag;
         {
             EA = 0;
-
-            IO_handler();
-            Display_handler();
+           
 #if (Seril_Debug == 1)
             Send1_String("copping_=1\r\n"); //有按键操作发送字符
             Send1_String("Button\r\n");     //发送按键值
             send1_Byte(Key.which_press);
 #endif
-            Key.service = 0;
-            Key.which_press = Key_pressed;
 
-            switch (Key.which_press)
-            {
+            Key_handler();
+            IO_handler();
+            Display_handler();
 
-            case Key_PTC:
-                // IO_PTC_LED=!IO_PTC_LED;
-                PWM.value = 2000;
-                LoadPWM(PWM.value);
-                Timer2_init();
-                Heating.on = !Heating.on; //启动IO_PTC加热
-                
-                break;
-            case Key_Vibration:
-                // Vibration_LED=!Vibration_LED;
-
-                IO_Vibration = !IO_Vibration;
-                
-                break;
-            case Key_Pump:
-                // Pump_LED=!Pump_LED;
-
-                IO_Pump = !IO_Pump; //启动气泵开关
-               
-                break;
-            case Key_Power:
-                //Power_LED=!Power_LED;
-                display(0x0f, GIRD2);
-                IO_Valve = !IO_Valve;
-               
-                break;
-                // -------------------------------
-                // Default event handler.
-            default:
-                break;
-            }
-            /*
-           switch(Key.times)
-           {
-               case 1:
-               
-               break;
-               case 2:
-               
-               break;
-               case 3:
-               
-               break;
-
-                // -------------------------------
-               // Default event handler.
-              default:
-              break;
-           }
-           */
         }
-        if (Key.long_press_state) //如果检测到长时间按键则打开电源及升压
-        {
-            EA = 0;
 
-            IO_Pump = 0;
-            IO_Vibration = 1;
-            IO_PTC = 0;
-            IO_Valve = 1;
 
-            Suction.on = 0;
-            Heating.on = 0;
+        
 
-            Key.long_press_state = 0; //reset press long time flag;
-            IO_Power = !IO_Power;     //trun on the power switch;
-            if (IO_Power)
-            {
-                display(0xff, GIRD1);
-                display(0xff, GIRD2);
-                delay_ms(3000);
-                display(0x00, GIRD1);
-                display(0x00, GIRD2);
-            }
-            else
-            {
-                display(0x00, GIRD1);
-                display(0x00, GIRD2);
-                EA = 1;
-                EX1 = 0;
-                WAKE_CLKO &= 0xef;
-                WAKE_CLKO &= 0xdf;
-                PCON |= 0x02; //sleep mode
-
-                WAKE_CLKO |= 0x20;
-                WAKE_CLKO |= 0x10;
-                EX1 = 1;
-            }
 #if (Seril_Debug == 1)
             Send1_String("long_press_state=1\r\n"); //发送字符串检测是否初始化成功
 #endif
         }
-        EA = 1;
-    } //
+        
+     //
 }

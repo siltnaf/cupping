@@ -51,7 +51,7 @@ void DeviceInit(void)
     IO_Valve = 1;
     IO_Power = 0;
 
-    Key.service = 0;
+    Key.update = 0;
     Suction.on = 0;
     Heating.on = 0;
 

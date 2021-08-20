@@ -2,12 +2,13 @@
 
 void KeyTimer(void) __interrupt TIMER0_VECTOR
 {
+    
 
     if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
         Key.debounce++;
     else
     {
-        Key.service = 0;
+        Key.update = 0;
         Key.debounce = 0;
         TR0 = 0; //停止计数
         ET0 = 0; //停止计数中断
@@ -21,7 +22,7 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR
         else
         {
             Key.times++;
-            Key.service = 1;
+            Key.update = 1;
             // IO_PTC_LED=!IO_PTC_LED;
             Key.long_press = 0;
             Key.long_press_state = 0;
@@ -32,7 +33,7 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR
         if (Key.long_press > 3)
         {
             Key.times++;
-            Key.service = 0;
+            Key.update = 0;
             //  Pump_LED=!Pump_LED;
             Key.long_press = 0;
             Key.long_press_state = 1;
@@ -86,7 +87,7 @@ void LoadPWM(u16 i)
 void INT0_int(void) __interrupt INT0_VECTOR //进中断时已经清除标志
 {
     Timer0_init(); //启动定时器：作用于消抖按键，判断按键功能
-    Key.service = 0;
+    Key.update = 0;
     Key_pressed = Key_Power;
     // LED1=!LED1;
     //EX0 = 0;	//INT0 Disable
@@ -97,7 +98,7 @@ void INT0_int(void) __interrupt INT0_VECTOR //进中断时已经清除标志
 void INT1_int(void) __interrupt INT1_VECTOR //进中断时已经清除标志
 {
     Timer0_init(); //启动定时器：作用于消抖按键，判断按键功能
-    Key.service = 0;
+    Key.update = 0;
     Key_pressed = Key_Pump;
     //LED2=!LED2;
     //EX1 = 0;	//INT1 Disable
@@ -107,7 +108,7 @@ void INT1_int(void) __interrupt INT1_VECTOR //进中断时已经清除标志
 void INT2_int(void) __interrupt INT2_VECTOR //进中断时已经清除标志
 {
     Timer0_init(); //启动定时器：作用于消抖按键，判断按键功能
-    Key.service = 0;
+    Key.update = 0;
     Key_pressed = Key_Vibration;
     // LED2=!LED2;
     //EX1 = 0;	//INT1 Disable
@@ -118,7 +119,7 @@ void INT2_int(void) __interrupt INT2_VECTOR //进中断时已经清除标志
 void INT3_int(void) __interrupt INT3_VECTOR //进中断时已经清除标志
 {
     Timer0_init(); //启动定时器：作用于消抖按键，判断按键功能
-    Key.service = 0;
+    Key.update = 0;
     Key_pressed = Key_PTC;
     // LED2=!LED2;
     //EX1 = 0;	//INT1 Disable
