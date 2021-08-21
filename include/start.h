@@ -117,5 +117,6 @@ extern Button_type Key_pressed;
 extern PWM_Status PWM;
 extern Timer_Status Time;
 extern State_name pre_state,next_state;
+extern unsigned char state;
 
 #endif

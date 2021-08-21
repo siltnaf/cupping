@@ -55,6 +55,8 @@ void DeviceInit(void)
     Suction.on = 0;
     Heating.on = 0;
 
+    state=idle_mode;
+
     Key.debounce = 0; //按键延时
     TR0 = 0;    //停止计数
     ET0 = 0;    //停止计数中断

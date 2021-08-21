@@ -30,7 +30,7 @@ PWM_Status PWM;
 Timer_Status Time;
 State_name pre_state,next_state;
 
-
+unsigned char state;
 
 
 
@@ -76,6 +76,25 @@ void Start(void)
             Display_handler();
 
         }
+
+
+        switch (state)
+        {
+        case idle_mode:
+            
+            next_state=idle_mode;
+            break;
+        
+        case normal_mode:
+            next_state=normal_mode;
+            break;
+
+        
+
+        default:
+            break;
+        }
+
 
 
         
