@@ -9,4 +9,5 @@ void Uart1_Init(void); //@11.0592MHz 9600hz
 void send1_Byte(unsigned char c);
 void Send1_String(char *s);
 void UART1_config();
+void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen);
 #endif

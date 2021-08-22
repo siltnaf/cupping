@@ -1,6 +1,8 @@
 
 #include <start.h>
 
+unsigned char LED1, LED2;
+
 void Time_handler(void)
 {
     Time.update = 0;
@@ -44,48 +46,19 @@ void Key_handler(void)
 
     {
 
-        next_state = Power_down;
+        state = Power_down;
 
         //如果检测到长时间按键则打开电源及升压
 
-        // EA = 0;
+        //
 
-        // IO_Pump = 0;
-        // IO_Vibration = 1;
-        // IO_PTC = 0;
-        // IO_Valve = 1;
+        //
 
-        // Suction.on = 0;
-        // Heating.on = 0;
-        // Vibration.on=0;
-
-        // Key.long_press_state = 0; //reset press long time flag;
-        // IO_Power = !IO_Power;     //trun on the power switch;
-        // if (IO_Power)
-        // {
-        //     display(0xff, GIRD1);
-        //     display(0xff, GIRD2);
-        //     delay_ms(3000);
-        //     display(0x00, GIRD1);
-        //     display(0x00, GIRD2);
-        // }
-        // else
-        // {
-        //     display(0x00, GIRD1);
-        //     display(0x00, GIRD2);
-        //     EA = 1;
-        //     EX1 = 0;
-        //     WAKE_CLKO &= 0xef;
-        //     WAKE_CLKO &= 0xdf;
-        //     PCON |= 0x02; //sleep mode
-
-        //     WAKE_CLKO |= 0x20;
-        //     WAKE_CLKO |= 0x10;
-        //     EX1 = 1;
+        //
     }
     else
     {
-
+        Dump_value(Key.which_press);
         switch (Key.which_press)
         {
 
@@ -106,9 +79,7 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-            // Pump_LED=!Pump_LED;
 
-            // IO_Pump = !IO_Pump; //启动气泵开关
             key_up(&Suction);
 
             break;
@@ -117,7 +88,8 @@ void Key_handler(void)
 
             // IO_Valve = !IO_Valve;
             key_up(&Power);
-            if (Power.on==0) next_state=Power_down;
+            if (Power.level == 0)
+                state = Power_down;
 
             break;
             // -------------------------------
@@ -125,8 +97,6 @@ void Key_handler(void)
         default:
             break;
         }
-        Key.update = 0;
-        Key.long_press_state = 0;
     }
 }
 
@@ -135,55 +105,53 @@ void IO_handler(void)
     if (Heating.on)
         IO_PTC = 1;
     else
-        IO_PTC = 0;
-
-    if (Power.on == 0)
     {
-
-        IO_Pump = 0;
-        IO_Vibration = 1;
         IO_PTC = 0;
-        IO_Valve = 1;
+        Heating.level = 0;
     }
-    else 
-        {
-         Suction.on=1;
-         next_state=normal_mode;
-
-        }
-       
 
     if (Vibration.on)
-        IO_Vibration=0;
-        else 
-        IO_Vibration=1;
+        IO_Vibration = 0;
+    else
+    {
+        IO_Vibration = 1;
+        Vibration.level = 0;
+    }
 
-     if (Suction.on)
-        IO_Pump=1;
-        else
-        IO_Pump=0;  
+    if (Suction.on)
+        IO_Pump = 1;
+    else
+    {
+        IO_Pump = 0;
+        Suction.level = 0;
+    }
 
+    if (state != Power_down)
+    {
+        IO_Power = 1;
 
+        if (Power.level==0) Power.level=1;
+    }
+
+    else
+        IO_Power = 0;
 }
 
 void Display_handler(void)
 {
-    if (Heating.on)
-        display(0xf0, GIRD2);
-    else
-        display(0x00, GIRD2);
+    u8 level_val[Max_key] = {0, 1, 3, 7};
+    u8 display_val = 0;
 
-    if (Vibration.on)
-        display(0x0f, GIRD1);
-    else
-        display(0x00, GIRD1); /* code */
-    if (Suction.on)
-        display(0xf0, GIRD1);
-    else
-        display(0x00, GIRD1);
+    display_val = (level_val[Vibration.level]) & 0b0000111;
+    display_val |= (level_val[Suction.level] << 3) & 0b0111000;
 
-    if (Power.on)
-        display(0x0f, GIRD2);
-    else
-        display(0x00, GIRD2);
+    LED1 = display_val;
+
+    display_val = (level_val[Heating.level]) & 0b0000111;
+    display_val |= (level_val[Power.level] << 3) & 0b0111000;
+
+    LED2 = display_val;
+
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
 }

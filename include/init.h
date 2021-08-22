@@ -12,7 +12,7 @@ void Timer0_init(void);
 void Timer2_init(void);
 
 void DeviceInit(void);
-
+void ParameterReset(void);
 
 
 

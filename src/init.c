@@ -1,6 +1,73 @@
 
 #include <init.h>
 
+void ParameterReset(void)
+
+{
+
+    //变量初始化
+    IO_Pump = 0;
+    IO_Vibration = 1;
+    IO_PTC = 0;
+    IO_Valve = 1;
+    IO_Power = 0;
+
+    Key.update = 0;
+    Key.long_press_state=0;
+
+
+    Suction.on = 0;
+    Heating.on = 0;
+    Vibration.on=0;
+
+    Suction.level=0;
+    Heating.level=0;
+    Vibration.level=0;
+
+    LED1=0;
+    LED2=0;
+
+
+}
+
+void DeviceInit(void)
+{
+
+    //IO init
+
+    P0M1 = 0;
+    P0M0 = 0; //设置为准双向口
+    P1M1 = 0;
+    P1M0 = 0x20; //设置为准双向口
+    P2M1 = 0;
+    P2M0 = 0; //设置为准双向口
+    P3M1 = 0;
+    P3M0 = 0x03; //设置为准双向口
+    P4M1 = 0;
+    P4M0 = 0; //设置为准双向口
+    P5M1 = 0;
+    P5M0 = 0x30; //设置为准双向口
+
+    ParameterReset();
+
+
+
+    state=normal_mode;
+
+    Key.debounce = 0; //按键延时
+    TR0 = 0;    //停止计数
+    ET0 = 0;    //停止计数中断
+
+    Int0_init();
+    Int1_init();
+    Int2_init();
+    Int3_init();
+
+#if (Seril_Debug == 0)
+    Timer2_init(); //use timer2 for PWM if UART is not use for debug
+#endif
+}
+
 void Int0_init(void)
 {
     IE0 = 1; //外中断0标志位
@@ -26,50 +93,9 @@ void Int3_init(void)
                        //INT3 只能下降沿中断
 }
 
-void DeviceInit(void)
-{
 
-    //IO init
 
-    P0M1 = 0;
-    P0M0 = 0; //设置为准双向口
-    P1M1 = 0;
-    P1M0 = 0x20; //设置为准双向口
-    P2M1 = 0;
-    P2M0 = 0; //设置为准双向口
-    P3M1 = 0;
-    P3M0 = 0x03; //设置为准双向口
-    P4M1 = 0;
-    P4M0 = 0; //设置为准双向口
-    P5M1 = 0;
-    P5M0 = 0x30; //设置为准双向口
 
-    //变量初始化
-    IO_Pump = 0;
-    IO_Vibration = 1;
-    IO_PTC = 0;
-    IO_Valve = 1;
-    IO_Power = 0;
-
-    Key.update = 0;
-    Suction.on = 0;
-    Heating.on = 0;
-
-    state=idle_mode;
-
-    Key.debounce = 0; //按键延时
-    TR0 = 0;    //停止计数
-    ET0 = 0;    //停止计数中断
-
-    Int0_init();
-    Int1_init();
-    Int2_init();
-    Int3_init();
-
-#if (Seril_Debug == 0)
-    Timer2_init(); //use timer2 for PWM if UART is not use for debug
-#endif
-}
 
 //========================================================================
 // 函数: void	Timer0_init(void)

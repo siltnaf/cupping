@@ -73,3 +73,31 @@ void UART1_config()
 //  Send1_String(teststring);
 // va_end(ap);
 //}
+
+/***********************************************************************
+* 功能：将一个十六进制字节串转换成ASCII码表示的十六进制字符串
+* 输入参数：pHex----十六进制数字节串首地址
+*                   pAscii---转换后ASCII码表示的十六进制字符串首地址
+*                   nLen---要转换的十六进制数长度（字节数）
+* 注：转换后的结果全部是大写ASCII码表示的十六进制数
+************************************************************************/
+void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen)
+{
+    unsigned char Nibble[2];
+    unsigned char i,j;
+    for (i = 0; i < nLen; i++){
+        Nibble[0] = (pHex[i] & 0xF0) >> 4;
+        Nibble[1] = pHex[i] & 0x0F;
+        for (j = 0; j < 2; j++){
+            if (Nibble[j] < 10){            
+                Nibble[j] += 0x30;
+            }
+            else{
+                if (Nibble[j] < 16)
+                    Nibble[j] = Nibble[j] - 10 + 'A';
+            }
+            *pAscii++ = Nibble[j];
+        }               // for (int j = ...)
+    }           // for (int i = ...)
+}
+

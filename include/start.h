@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Seril_Debug 0
+#define Seril_Debug 1
 
 #include "stc12.h"
 #include "8051.h"
@@ -30,7 +30,7 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define IO_Vibration P3_0
 #define IO_Valve P3_1
 
-#define Max_key 3
+#define Max_key 4
 
 #define PWM_DUTY 6000 //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
 #define PWM_DUTY1 4000
@@ -41,12 +41,13 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 //自定义一个int结构体位域来解析按键：单次，双击，长按，等功能
 typedef struct Button_Setting
 {
-    unsigned int update : 1;
-    unsigned int times : 2;
-    unsigned int which_press : 8;
-    unsigned int long_press : 4;
-    unsigned int long_press_state : 1;
+    unsigned char update : 1;
+    unsigned char times : 2;
+    unsigned char long_press : 4;
+    unsigned char long_press_state : 1;
     unsigned char debounce;
+    unsigned char which_press;
+
 } Button_Status;
 
 //program setting
@@ -61,10 +62,10 @@ typedef struct Program_Setting
 //define 4 buttons
 typedef enum Button_type
 {
-    Key_Power,     //0x00
-    Key_Pump,      //0x01
-    Key_Vibration, //0x02
-    Key_PTC        //0x03
+    Key_Power=0x00,     //0x00
+    Key_Pump=0x01,      //0x01
+    Key_Vibration=0x02, //0x02
+    Key_PTC=0x03        //0x03
 
 } Button_type;
 
@@ -106,7 +107,7 @@ typedef struct Timer_Setting
 
 
 void Start(void);
-
+extern void Dump_value(u8 val);
 
 
 
@@ -116,7 +117,8 @@ extern Level Power, Vibration, Suction, Heating;
 extern Button_type Key_pressed;
 extern PWM_Status PWM;
 extern Timer_Status Time;
-extern State_name pre_state,next_state;
+extern State_name state;
+
 extern unsigned char state;
 
 #endif
