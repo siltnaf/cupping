@@ -12,6 +12,7 @@ void ParameterReset(void)
     IO_Valve = 1;
     IO_Power = 0;
 
+
     Key.update = 0;
     Key.long_press_state=0;
 
@@ -52,7 +53,7 @@ void DeviceInit(void)
 
 
 
-    state=normal_mode;
+    state=idle_mode;
 
     Key.debounce = 0; //按键延时
     TR0 = 0;    //停止计数
@@ -70,14 +71,14 @@ void DeviceInit(void)
 
 void Int0_init(void)
 {
-    IE0 = 1; //外中断0标志位
+    IE0 = 0; //外中断0标志位
     EX0 = 1; //INT0 Enable
     IT0 = 1; //INT0 下降沿中断
     //	IT0 = 0;		//INT0 上升,下降沿中断
 }
 void Int1_init(void)
 {
-    IE1 = 1; //外中断1标志位
+    IE1 = 0; //外中断1标志位
     EX1 = 1; //INT1 Enable
     IT1 = 1; //INT1 下降沿中断
     //	IT1 = 0;		//INT1 上升,下降沿中断

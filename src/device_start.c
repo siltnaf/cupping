@@ -103,7 +103,7 @@ void Start(void)
             break;
        case Power_down:
             
-            ParameterReset();
+            DeviceInit();
             
             EA = 1;
              EX1 = 0;   
@@ -114,6 +114,7 @@ void Start(void)
 
             WAKE_CLKO |= 0x20;
             WAKE_CLKO |= 0x10;
+            EX1=1;
             EA=0;
             Key.which_press=Key_Power;
             Power.on=1;
