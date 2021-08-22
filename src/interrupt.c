@@ -2,8 +2,7 @@
 
 void KeyTimer(void) __interrupt TIMER0_VECTOR
 {
-    
-
+    Time.update=1;
     if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
         Key.debounce++;
     else
