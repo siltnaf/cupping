@@ -3,6 +3,16 @@
 
 unsigned char LED1, LED2;
 
+void Timer_Reset(void)
+{
+    Time.count=0;
+    Time.sec=0;
+    Time.min=0;
+
+
+}
+
+
 void Time_handler(void)
 {
     Time.update = 0;
@@ -12,6 +22,7 @@ void Time_handler(void)
     if (Time.count >= 1000)
     {
         Time.sec++;
+      
         Time.count = 0;
     }
     if (Time.sec >= 60)
@@ -23,6 +34,7 @@ void Time_handler(void)
     {
         Time.min = 0;
     }
+    //if (Time.min>duration) state=Power_down;
 }
 
 void key_up(Level *this_key)
@@ -40,6 +52,7 @@ void key_up(Level *this_key)
 void Key_handler(void)
 
 {
+    Timer_Reset();
 
     Key.which_press = Key_pressed;
     if ((Key.which_press == Key_Power) && (Key.long_press_state))
@@ -90,7 +103,10 @@ void Key_handler(void)
             key_up(&Power);
             if (Power.level == 0)
                 state = Power_down;
-       
+            if (Power.level==1) duration=Time1;
+            if (Power.level==2) duration=Time2;
+            if (Power.level==3) duration=Time3;
+
 
             break;
             // -------------------------------

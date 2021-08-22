@@ -82,6 +82,14 @@ typedef enum State_name
 
 } State_name;
 
+typedef enum Treatment_time
+{
+    Time0 =0,
+    Time1=1 ,
+    Time2=2 ,
+    Time3=3
+
+} Treatment_time;
 
 
 
@@ -119,6 +127,7 @@ extern Button_type Key_pressed;
 extern PWM_Status PWM;
 extern Timer_Status Time;
 extern State_name state;
+extern Treatment_time duration;
 
 extern unsigned char state;
 

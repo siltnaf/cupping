@@ -4,12 +4,14 @@
 //自定义枚举4个按键按下时的值；发热键，电源键，气泵键，振动键
 
 //Setting level
-enum Setting_level
+/* enum Setting_level
 {
     Level0 = 0,
     Level1 = 1,
     Level2 = 2
 } Levels;
+ */
+
 
 //hx711通道；
 union
@@ -24,6 +26,7 @@ Button_Status Key; //初始化按键
 Level Power, Vibration, Suction, Heating;
 PWM_Status PWM;
 Timer_Status Time;
+Treatment_time duration;
 State_name state;
 
 signed char button_number[] = "0";
@@ -64,7 +67,7 @@ void Start(void)
     while (1)
     {
         EA = 1;
-
+        Dump_value(Time.update);
         if (Time.update)
             Time_handler();
 
