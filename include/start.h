@@ -38,14 +38,18 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define PWM_HIGH_MIN 32                        //??PWM????????????????
 #define PWM_HIGH_MAX (PWM_DUTY - PWM_HIGH_MIN) //??PWM????????????????
 
+#define MAIN_Fosc 11059200L
+#define T0_25MS (65536 - MAIN_Fosc / 4000) //1T mode Timer0
+
 //自定义一个int结构体位域来解析按键：单次，双击，长按，等功能
 typedef struct Button_Setting
 {
     unsigned char update : 1;
-    unsigned char times : 2;
+    unsigned char pressed : 1;
     unsigned char long_press : 4;
     unsigned char long_press_state : 1;
-    unsigned char debounce;
+    unsigned char times;
+    unsigned int  debounce;
     unsigned char which_press;
 
 } Button_Status;
@@ -62,20 +66,19 @@ typedef struct Program_Setting
 //define 4 buttons
 typedef enum Button_type
 {
-    Key_Power=0x00,     //0x00
-    Key_Pump=0x01,      //0x01
-    Key_Vibration=0x02, //0x02
-    Key_PTC=0x03        //0x03
+    Key_Power = 0x00,     //0x00
+    Key_Pump = 0x01,      //0x01
+    Key_Vibration = 0x02, //0x02
+    Key_PTC = 0x03        //0x03
 
 } Button_type;
-
 
 //State machine
 typedef enum State_name
 {
-    idle_mode ,
-    normal_mode ,
-    Timer_mode ,
+    idle_mode,
+    normal_mode,
+    Timer_mode,
     Power_down,
     Power_on,
     BT_mode,
@@ -84,41 +87,32 @@ typedef enum State_name
 
 typedef enum Treatment_time
 {
-    Time0 =0,
-    Time1=1 ,
-    Time2=2 ,
-    Time3=3
+    Time0 = 0,
+    Time1 = 1,
+    Time2 = 2,
+    Time3 = 3
 
 } Treatment_time;
 
-
-
 typedef struct PWM_Setting
 {
-    unsigned char on:1;
+    unsigned char on : 1;
     unsigned int low;
     unsigned int high;
     unsigned int value;
 } PWM_Status;
 
-
-
 typedef struct Timer_Setting
 {
-    unsigned char update:1;
-    unsigned char blink:1;
-    unsigned char sec:6;
+    unsigned char update : 1;
+    unsigned char blink : 1;
+    unsigned char sec : 6;
     unsigned char min;
-    unsigned int  count;
+    unsigned int count;
 } Timer_Status;
-
-
-
 
 void Start(void);
 extern void Dump_value(u8 val);
-
-
 
 //初始化按键
 extern Button_Status Key;

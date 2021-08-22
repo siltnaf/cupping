@@ -67,7 +67,9 @@ void Start(void)
     while (1)
     {
         EA = 1;
-        Dump_value(Time.update);
+        TR0=1;
+        ET0=1;
+       
         if (Time.update)
             Time_handler();
 

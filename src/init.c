@@ -12,23 +12,19 @@ void ParameterReset(void)
     IO_Valve = 1;
     IO_Power = 0;
 
-
     Key.update = 0;
-    Key.long_press_state=0;
-
+    Key.long_press_state = 0;
 
     Suction.on = 0;
     Heating.on = 0;
-    Vibration.on=0;
+    Vibration.on = 0;
 
-    Suction.level=0;
-    Heating.level=0;
-    Vibration.level=0;
+    Suction.level = 0;
+    Heating.level = 0;
+    Vibration.level = 0;
 
-    LED1=0;
-    LED2=0;
-
-
+    LED1 = 0;
+    LED2 = 0;
 }
 
 void DeviceInit(void)
@@ -51,13 +47,11 @@ void DeviceInit(void)
 
     ParameterReset();
 
-
-
-    state=Power_on;
+    state = Power_on;
 
     Key.debounce = 0; //按键延时
-    TR0 = 0;    //停止计数
-    ET0 = 0;    //停止计数中断
+    TR0 = 0;          //停止计数
+    ET0 = 0;          //停止计数中断
 
     Int0_init();
     Int1_init();
@@ -94,10 +88,6 @@ void Int3_init(void)
                        //INT3 只能下降沿中断
 }
 
-
-
-
-
 //========================================================================
 // 函数: void	Timer0_init(void)
 // 描述: timer0初始化函数.
@@ -105,7 +95,7 @@ void Int3_init(void)
 // 返回: none.
 // 版本: V1.0, 2015-1-12
 //========================================================================
-void Timer0_init(void)
+/* void Timer0_init(void)
 {
     TR0 = 0; //停止计数
 
@@ -137,7 +127,20 @@ void Timer0_init(void)
 #else
 #error "Timer0设置的中断过慢!"
 #endif
+
+ */
+
+void Timer0_init(void)
+{
+    TMOD &= 0x00; //clear timer0 mode
+    AUXR = 0x80;  //1T mode
+    TL0 = T0_25MS;
+    TH0 = T0_25MS >> 8;
+
+    TR0 = 1;
+    ET0 = 1;
 }
+
 
 void Timer2_init(void)
 {

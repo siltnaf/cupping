@@ -5,24 +5,21 @@ unsigned char LED1, LED2;
 
 void Timer_Reset(void)
 {
-    Time.count=0;
-    Time.sec=0;
-    Time.min=0;
-
-
+    Time.count = 0;
+    Time.sec = 0;
+    Time.min = 0;
 }
-
 
 void Time_handler(void)
 {
     Time.update = 0;
     Time.count++;
-    if (Time.count >= 250)
-        Time.blink = !Time.blink;
-    if (Time.count >= 1000)
+    if (Time.count % 1000 == 0)
+        Time.blink = !Time.blink; //each blink is 250ms
+    if (Time.count >= 4000)
     {
         Time.sec++;
-      
+
         Time.count = 0;
     }
     if (Time.sec >= 60)
@@ -34,7 +31,57 @@ void Time_handler(void)
     {
         Time.min = 0;
     }
-    //if (Time.min>duration) state=Power_down;
+    if (Time.min > duration)
+        state = Power_down;
+
+    if ((!INT0) || (!INT1) || (!INT2) || (!INT3)) //if one of the key is release timer is reset
+       {
+        Key.debounce++;
+      
+       }
+        
+    else
+    {
+        Key.update = 0;
+        Key.pressed = 0;
+        Key.debounce = 0;
+        Key.long_press = 0;
+    }
+
+    if (Key.debounce > 2)
+
+    {
+        
+        Key.update = 1;
+        Key.pressed = 0;
+        Key.debounce = 0;
+        Key.long_press = 0;
+    }
+
+    /* if (Key.debounce % 200 == 0) //debounce
+    {
+        if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
+            Key.long_press++;
+        else
+        {
+            Key.times++;
+            Key.update = 1;
+
+            Key.long_press = 0;
+            Key.long_press_state = 0;
+            Key.debounce = 0;
+        }
+
+        if (Key.long_press > 3)
+        {
+            Key.times++;
+            Key.update = 0;
+            //  Pump_LED=!Pump_LED;
+            Key.long_press = 0;
+            Key.long_press_state = 1;
+            Key.debounce = 0;
+        }
+    } */
 }
 
 void key_up(Level *this_key)
@@ -103,10 +150,12 @@ void Key_handler(void)
             key_up(&Power);
             if (Power.level == 0)
                 state = Power_down;
-            if (Power.level==1) duration=Time1;
-            if (Power.level==2) duration=Time2;
-            if (Power.level==3) duration=Time3;
-
+            if (Power.level == 1)
+                duration = Time1;
+            if (Power.level == 2)
+                duration = Time2;
+            if (Power.level == 3)
+                duration = Time3;
 
             break;
             // -------------------------------
