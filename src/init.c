@@ -53,7 +53,7 @@ void DeviceInit(void)
 
 
 
-    state=idle_mode;
+    state=Power_on;
 
     Key.debounce = 0; //按键延时
     TR0 = 0;    //停止计数

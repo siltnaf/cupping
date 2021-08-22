@@ -1,7 +1,6 @@
 
 #include <start.h>
 
-
 //自定义枚举4个按键按下时的值；发热键，电源键，气泵键，振动键
 
 //Setting level
@@ -27,25 +26,21 @@ PWM_Status PWM;
 Timer_Status Time;
 State_name state;
 
-
 signed char button_number[] = "0";
-
 
 void Dump_value(u8 val)
 {
 #if (Seril_Debug == 1)
-            Send1_String("debug value\r\n"); //有按键操作发送字
+    Send1_String("debug value\r\n"); //有按键操作发送字
 
-            button_number[0] = val;
-            HexToAscii(button_number, button_number, 1);
-            Send1_String(button_number);
-            Send1_String("\r\n"); 
+    button_number[0] = val;
+    HexToAscii(button_number, button_number, 1);
+    Send1_String(button_number);
+    Send1_String("\r\n");
 
-            // Send1_String(button_number);
+    // Send1_String(button_number);
 #endif
 }
-
-
 
 void Start(void)
 {
@@ -63,13 +58,13 @@ void Start(void)
     Send1_String("STC15W204S\r\nUart is ok !\r\n");      //发送字符串检测是否初始化成功
     Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n"); //发送字符串检测是否初始化成功
 #endif
-    Key.update=0;
-    Key.long_press_state=0;
+    Key.update = 0;
+    Key.long_press_state = 0;
 
     while (1)
     {
-        EA=1;
-     
+        EA = 1;
+
         if (Time.update)
             Time_handler();
 
@@ -77,18 +72,12 @@ void Start(void)
         {
             EA = 0;
 
-       
-           
-            
             Key_handler();
             IO_handler();
             Display_handler();
-    
-           
 
-        Key.update = 0;
-        Key.long_press_state = 0;
-
+            Key.update = 0;
+            Key.long_press_state = 0;
         }
 
         switch (state)
@@ -101,26 +90,44 @@ void Start(void)
         case normal_mode:
             state = normal_mode;
             break;
-       case Power_down:
-            
+        case Power_down:
+
             DeviceInit();
-            
+
             EA = 1;
-             EX1 = 0;   
-                        //disable other key interrupt
-             WAKE_CLKO &= 0xef;    //disable other key interrupt
-             WAKE_CLKO &= 0xdf;     //disable other key interrupt
-             PCON |= 0x02; //sleep mode only power key can wake up
+            EX1 = 0;
+            //disable other key interrupt
+            WAKE_CLKO &= 0xef; //disable other key interrupt
+            WAKE_CLKO &= 0xdf; //disable other key interrupt
+            PCON |= 0x02;      //sleep mode only power key can wake up
 
             WAKE_CLKO |= 0x20;
             WAKE_CLKO |= 0x10;
-            EX1=1;
-            EA=0;
-            Key.which_press=Key_Power;
-            Power.on=1;
-    
+            EX1 = 1;
+            EA = 0;
+            Key.which_press = Key_Power;
+            Power.on = 1;
+            Power.level=0;
+            state = Power_on;
+            break;
+
+case Power_on:
+            IO_Power=1;
+            LED1=0xff;
+            LED2=0xff;
+            
+            display(LED2,GIRD2);
+            display(LED1,GIRD1);
+            delay_ms(10000);
+            LED1=0x00;
+            LED2=0x00;
+           
+            display(LED2,GIRD2);
+            display(LED1,GIRD1);
+          
             state = idle_mode;
             break;
+
         default:
             break;
         }

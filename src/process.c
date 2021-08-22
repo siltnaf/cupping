@@ -58,7 +58,7 @@ void Key_handler(void)
     }
     else
     {
-        Dump_value(Key.which_press);
+
         switch (Key.which_press)
         {
 
@@ -90,6 +90,7 @@ void Key_handler(void)
             key_up(&Power);
             if (Power.level == 0)
                 state = Power_down;
+       
 
             break;
             // -------------------------------
@@ -130,7 +131,8 @@ void IO_handler(void)
     {
         IO_Power = 1;
 
-        if (Power.level==0) Power.level=1;
+        if (Power.level == 0)
+            Power.level = 1;
     }
 
     else
