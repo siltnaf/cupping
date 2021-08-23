@@ -10,36 +10,61 @@ void Timer_Reset(void)
     Time.min = 0;
 }
 
-void Time_handler(void)
+void Time_handler(void) //Timer 0 is 50ms period,
 {
     Time.update = 0;
     Time.count++;
-    if (Time.count % 1000 == 0)
-        Time.blink = !Time.blink; //each blink is 250ms
-    if (Time.count >= 4000)
+
+    if ((Time.count % 10) == 0)
+        Time.quartersec = !Time.quartersec;
+
+    if (Time.count > 19)
     {
         Time.sec++;
-
         Time.count = 0;
     }
-    if (Time.sec >= 60)
+
+    if (Time.sec > 59)
     {
         Time.sec = 0;
+
         Time.min++;
     }
-    if (Time.min >= 60)
+
+    if (Time.min > 59)
     {
         Time.min = 0;
     }
-    if (Time.min > duration)
-        state = Power_down;
+      if ((Power.level==3) &&(Time.min >= Time3))
+        {
+            Power.level=2;
+
+            Time.min=0;
+            Display_handler();
+        }
+   if ((Power.level==2) &&(Time.min >= Time2))
+        {
+            Power.level=1;
+           
+            Time.min=0;
+            Display_handler();
+        }
+ 
+
+     if ((Power.level==1) &&(Time.min >= Time1))
+        {
+            Power.level=0;
+
+            state=Power_down;
+            Display_handler();
+            Time.min=0;
+        }  
 
     if ((!INT0) || (!INT1) || (!INT2) || (!INT3)) //if one of the key is release timer is reset
-       {
+    {
         Key.debounce++;
-      
-       }
-        
+    }
+
     else
     {
         Key.update = 0;
@@ -48,40 +73,45 @@ void Time_handler(void)
         Key.long_press = 0;
     }
 
-    if (Key.debounce > 2)
+  
+   /*  if (Key.debounce > 50) //debounce
+    {
+        if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
+        {
+            Key.long_press++;
+            Key.debounce = 0;
+            
+        }
+
+        else
+        {
+
+            Key.update = 1;
+            Key.pressed = 0;
+            Key.long_press = 0;
+            Key.long_press_state = 0;
+            Key.debounce = 0;
+        }
+        
+    if (Key.long_press > 3)
+        {
+            
+            state=Power_down;
+           
+        } 
+    }*/
+    
+
+      if (Key.debounce > 10)
 
     {
-        
+
         Key.update = 1;
         Key.pressed = 0;
         Key.debounce = 0;
         Key.long_press = 0;
     }
 
-    /* if (Key.debounce % 200 == 0) //debounce
-    {
-        if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
-            Key.long_press++;
-        else
-        {
-            Key.times++;
-            Key.update = 1;
-
-            Key.long_press = 0;
-            Key.long_press_state = 0;
-            Key.debounce = 0;
-        }
-
-        if (Key.long_press > 3)
-        {
-            Key.times++;
-            Key.update = 0;
-            //  Pump_LED=!Pump_LED;
-            Key.long_press = 0;
-            Key.long_press_state = 1;
-            Key.debounce = 0;
-        }
-    } */
 }
 
 void key_up(Level *this_key)
@@ -148,15 +178,28 @@ void Key_handler(void)
 
             // IO_Valve = !IO_Valve;
             key_up(&Power);
-            if (Power.level == 0)
-                state = Power_down;
-            if (Power.level == 1)
-                duration = Time1;
-            if (Power.level == 2)
-                duration = Time2;
-            if (Power.level == 3)
-                duration = Time3;
+            switch (Power.level)
+                {
+                case 0:
+                    state = Power_down;
+                    break;
+                case 1:
+                    duration = Time1;
+                   
+                    break;
 
+                case 2:
+                    duration = Time2+Time1;
+                    
+                    break;
+                case 3:
+                    duration = Time3+Time2+Time1;
+                   
+                    break;
+
+                default:
+                    break;
+                }
             break;
             // -------------------------------
             // Default event handler.

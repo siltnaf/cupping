@@ -23,6 +23,10 @@ void ParameterReset(void)
     Heating.level = 0;
     Vibration.level = 0;
 
+    Time.sec = 0;
+    Time.min = 0;
+    Time.count = 0;
+
     LED1 = 0;
     LED2 = 0;
 }
@@ -57,6 +61,7 @@ void DeviceInit(void)
     Int1_init();
     Int2_init();
     Int3_init();
+    Timer0_init();
 
 #if (Seril_Debug == 0)
     Timer2_init(); //use timer2 for PWM if UART is not use for debug
@@ -95,7 +100,7 @@ void Int3_init(void)
 // 返回: none.
 // 版本: V1.0, 2015-1-12
 //========================================================================
-/* void Timer0_init(void)
+  void Timer0_init(void)
 {
     TR0 = 0; //停止计数
 
@@ -128,18 +133,10 @@ void Int3_init(void)
 #error "Timer0设置的中断过慢!"
 #endif
 
- */
+} 
+ 
 
-void Timer0_init(void)
-{
-    TMOD &= 0x00; //clear timer0 mode
-    AUXR = 0x80;  //1T mode
-    TL0 = T0_25MS;
-    TH0 = T0_25MS >> 8;
 
-    TR0 = 1;
-    ET0 = 1;
-}
 
 
 void Timer2_init(void)

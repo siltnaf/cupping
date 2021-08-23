@@ -12,10 +12,10 @@ void TimeReset(void)
 
 }
 
-void KeyTimer(void) __interrupt TIMER0_VECTOR
+void KeyTimer(void) __interrupt TIMER0_VECTOR      //150ms period
 {
     Time.update=1;
-
+   
     if (Key.pressed==1)
         Key.debounce++;
 /* 
@@ -29,7 +29,7 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR
 void PWMTimer(void) __interrupt TIMER2_VECTOR
 {
     PWM.on = !PWM.on;
-
+   
     if (PWM.on == 1)
     {
 

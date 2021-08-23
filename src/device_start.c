@@ -69,10 +69,12 @@ void Start(void)
         EA = 1;
         TR0=1;
         ET0=1;
-       
+      // IO_Pump =Time.halfsec;
+       // Dump_value(Time.min);
         if (Time.update)
             Time_handler();
-
+        Dump_value(Time.min);
+        IO_Pump= ((Time.sec%2)==0) ;
         if ((Key.update) || (Key.long_press_state)) //按键中断flag;
         {
             EA = 0;
@@ -95,6 +97,17 @@ void Start(void)
         case normal_mode:
             state = normal_mode;
             break;
+
+
+
+        case Timer_mode:
+            if (duration>(Time2+Time1)) 
+                {Power.level=2;
+                }
+                if (duration >Time1)
+            break;
+
+
         case Power_down:
 
             DeviceInit();
@@ -113,6 +126,7 @@ void Start(void)
             Key.which_press = Key_Power;
             Power.on = 1;
             Power.level=0;
+
             state = Power_on;
             break;
 
@@ -129,7 +143,8 @@ case Power_on:
            
             display(LED2,GIRD2);
             display(LED1,GIRD1);
-          
+            Power.level=1;
+            Display_handler();
             state = idle_mode;
             break;
 

@@ -21,7 +21,7 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 
 //
 
-#define Timer0_Reload (MAIN_Fosc / 100)       //Timer 0 中断频率, 100次/秒
+#define Timer0_Reload (MAIN_Fosc /40)       //Timer 0 中断频率, 50 ms period
 #define T2KHZ (65536 - MAIN_Fosc / 12 / 6000) //Timer2
 
 #define IO_Power P1_5
@@ -38,9 +38,6 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define PWM_HIGH_MIN 32                        //??PWM????????????????
 #define PWM_HIGH_MAX (PWM_DUTY - PWM_HIGH_MIN) //??PWM????????????????
 
-#define MAIN_Fosc 11059200L
-#define T0_25MS (65536 - MAIN_Fosc / 4000) //1T mode Timer0
-
 //自定义一个int结构体位域来解析按键：单次，双击，长按，等功能
 typedef struct Button_Setting
 {
@@ -49,7 +46,7 @@ typedef struct Button_Setting
     unsigned char long_press : 4;
     unsigned char long_press_state : 1;
     unsigned char times;
-    unsigned int  debounce;
+    unsigned char debounce;
     unsigned char which_press;
 
 } Button_Status;
@@ -89,8 +86,8 @@ typedef enum Treatment_time
 {
     Time0 = 0,
     Time1 = 1,
-    Time2 = 2,
-    Time3 = 3
+    Time2 = 1,
+    Time3 = 1
 
 } Treatment_time;
 
@@ -104,11 +101,15 @@ typedef struct PWM_Setting
 
 typedef struct Timer_Setting
 {
-    unsigned char update : 1;
-    unsigned char blink : 1;
-    unsigned char sec : 6;
+   
+    unsigned char sec;
     unsigned char min;
-    unsigned int count;
+    unsigned char count;
+    unsigned char update : 1;
+    unsigned char quartersec : 1;
+    unsigned char halfsec:1;
+    unsigned char onesec:1;
+
 } Timer_Status;
 
 void Start(void);
