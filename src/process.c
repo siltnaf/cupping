@@ -114,7 +114,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
 
 }
 
-void key_up(Level *this_key)
+void key_up(LEVEL_STAT *this_key)
 {
 
     this_key->level++;

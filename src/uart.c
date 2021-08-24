@@ -3,9 +3,8 @@
 #if (Seril_Debug == 1)
 char UAR[20], temp, rec_flag = 0;
 signed char button_number[] = "0";
-unsigned char unicode_number[4]={0};
-unsigned char consumer_number[]=""; 
-
+unsigned char unicode_number[4] = {0};
+unsigned char consumer_number[] = "";
 
 //定时器2，波特率9600
 void Uart1_Init(void) //@11.0592MHz
@@ -88,58 +87,58 @@ void UART1_config()
 ************************************************************************/
 void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen)
 {
-    unsigned char Nibble[2];
-    unsigned char i,j;
-    for (i = 0; i < nLen; i++){
-        Nibble[0] = (pHex[i] & 0xF0) >> 4;
-        Nibble[1] = pHex[i] & 0x0F;
-        for (j = 0; j < 2; j++){
-            if (Nibble[j] < 10){            
-                Nibble[j] += 0x30;
-            }
-            else{
-                if (Nibble[j] < 16)
-                    Nibble[j] = Nibble[j] - 10 + 'A';
-            }
-            *pAscii++ = Nibble[j];
-        }               // for (int j = ...)
-    }           // for (int i = ...)
+	unsigned char Nibble[2];
+	unsigned char i, j;
+	for (i = 0; i < nLen; i++)
+	{
+		Nibble[0] = (pHex[i] & 0xF0) >> 4;
+		Nibble[1] = pHex[i] & 0x0F;
+		for (j = 0; j < 2; j++)
+		{
+			if (Nibble[j] < 10)
+			{
+				Nibble[j] += 0x30;
+			}
+			else
+			{
+				if (Nibble[j] < 16)
+					Nibble[j] = Nibble[j] - 10 + 'A';
+			}
+			*pAscii++ = Nibble[j];
+		} // for (int j = ...)
+	}	  // for (int i = ...)
 }
-
-
 
 void Dump_value(u8 val)
 {
 #if (Seril_Debug == 1)
-    Send1_String("debug value\r\n"); //有按键操作发送字
+	Send1_String("debug value\r\n"); //有按键操作发送字
 
-    button_number[0] = val;
-    HexToAscii(button_number, button_number, 1);
-    Send1_String(button_number);
-    Send1_String("\r\n");
+	button_number[0] = val;
+	HexToAscii(button_number, button_number, 1);
+	Send1_String(button_number);
+	Send1_String("\r\n");
 
-    // Send1_String(button_number);
+	// Send1_String(button_number);
 #endif
 }
-
 
 void Dump_AD(unsigned long ad_value)
 {
 
+	unicode_number[3] = (ad_value);
 
-       unicode_number[3]=ad_value;
-       unicode_number[2]=ad_value>>8;
-       unicode_number[1]=ad_value>>16;
-       unicode_number[0]=ad_value>>24;
-       HexToAscii(unicode_number, consumer_number, 4);
-	   Send1_String(consumer_number);
-	   Send1_String("\r\n");
+	unicode_number[2] = (ad_value >> 8);
 
+	unicode_number[1] = (ad_value >> 16);
+	unicode_number[0] = (ad_value >> 24);
 
+	Dump_value(unicode_number[0]);
+	/* Dump_value(unicode_number[1]);
 
+	Dump_value(unicode_number[2]);
+	Dump_value(unicode_number[3]); */
 
+	/*  */ HexToAscii(unicode_number, consumer_number, 4);
+	// Send1_String(consumer_number);
 }
-
-  
-
-

@@ -16,9 +16,9 @@
 //hx711通道；
 union
 {
-    unsigned char A128;
-    unsigned char B32;
-    unsigned char A64; /*channel data */
+    unsigned char P128;
+    unsigned char T32;
+    unsigned char P64; /*channel data */
 } channel;
 
 BUTTON Key_pressed;
@@ -28,7 +28,7 @@ PWM_STAT PWM;
 TIMER_STAT Time;
 COUNTER duration;
 STATE state;
-
+SENSOR sensor;
 
 
 
@@ -39,15 +39,15 @@ void Start(void)
     DeviceInit();
 
     //hx711通道初始化
-    channel.A128 = 24; //A通道128  pressure
-    channel.B32 = 25;  //B通道32   ntc
-    channel.A64 = 26;  //A通道64   pressure
+    channel.P128 = 24; //A通道128  pressure
+    channel.T32 = 25;  //B通道32   ntc
+    channel.P64 = 26;  //A通道64   pressure
 
-    HX711_Read(channel.B32);
+    HX711_Read(channel.T32);
 
 #if (Seril_Debug == 1)
     Send1_String("STC15W204S\r\nUart is ok !\r\n");      //发送字符串检测是否初始化成功
-    Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n"); //发送字符串检测是否初始化成功
+  
 #endif
     Key.update = 0;
     Key.long_press_state = 0;
@@ -57,8 +57,11 @@ void Start(void)
         EA = 1;
         TR0=1;
         ET0=1;
-      // IO_Pump =Time.halfsec;
-       // Dump_value(Time.min);
+        
+ 
+         sensor.ntc=0x12345678;
+        Dump_AD(sensor.ntc); 
+
         if (Time.update)
             Time_handler();
         if (IN_Power&&IN_PTC&&IN_Vibration&&IN_Pump) Key.pressed=0;

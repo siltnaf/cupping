@@ -11,6 +11,6 @@ void Send1_String(char *s);
 void UART1_config();
 void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen);
 extern void Dump_value(u8 val);
-extern void Dump_AD(u8 channel);
+extern void Dump_AD(unsigned long ad_value);
 
 #endif
