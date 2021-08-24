@@ -102,12 +102,12 @@ void Time_handler(void) //Timer 0 is 50ms period,
     }*/
     
 
-      if (Key.debounce > 10)
+      if (Key.debounce > 5)
 
     {
 
-        Key.update = 1;
-        Key.pressed = 0;
+        
+        Key.update=1;
         Key.debounce = 0;
         Key.long_press = 0;
     }
@@ -130,6 +130,7 @@ void Key_handler(void)
 
 {
     Timer_Reset();
+
 
     Key.which_press = Key_pressed;
     if ((Key.which_press == Key_Power) && (Key.long_press_state))

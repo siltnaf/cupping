@@ -63,7 +63,7 @@ void LoadPWM(u16 i)
 /********************* INT0中断函数 *************************/
 void INT0_int(void) __interrupt INT0_VECTOR //进中断时已经清除标志
 {
-    
+
      TimeReset();
     Key_pressed = Key_Power;
     // LED1=!LED1;

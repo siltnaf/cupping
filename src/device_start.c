@@ -21,29 +21,17 @@ union
     unsigned char A64; /*channel data */
 } channel;
 
-Button_type Key_pressed;
-Button_Status Key; //初始化按键
-Level Power, Vibration, Suction, Heating;
-PWM_Status PWM;
-Timer_Status Time;
-Treatment_time duration;
-State_name state;
+BUTTON Key_pressed;
+BUTTON_STAT Key; //初始化按键
+LEVEL_STAT Power, Vibration, Suction, Heating;
+PWM_STAT PWM;
+TIMER_STAT Time;
+COUNTER duration;
+STATE state;
 
-signed char button_number[] = "0";
 
-void Dump_value(u8 val)
-{
-#if (Seril_Debug == 1)
-    Send1_String("debug value\r\n"); //有按键操作发送字
 
-    button_number[0] = val;
-    HexToAscii(button_number, button_number, 1);
-    Send1_String(button_number);
-    Send1_String("\r\n");
 
-    // Send1_String(button_number);
-#endif
-}
 
 void Start(void)
 {
@@ -51,9 +39,9 @@ void Start(void)
     DeviceInit();
 
     //hx711通道初始化
-    channel.A128 = 24; //A通道128
-    channel.B32 = 25;  //B通道32
-    channel.A64 = 26;  //A通道64
+    channel.A128 = 24; //A通道128  pressure
+    channel.B32 = 25;  //B通道32   ntc
+    channel.A64 = 26;  //A通道64   pressure
 
     HX711_Read(channel.B32);
 
@@ -73,19 +61,20 @@ void Start(void)
        // Dump_value(Time.min);
         if (Time.update)
             Time_handler();
-        Dump_value(Time.min);
-        IO_Pump= ((Time.sec%2)==0) ;
-        if ((Key.update) || (Key.long_press_state)) //按键中断flag;
+        if (IN_Power&&IN_PTC&&IN_Vibration&&IN_Pump) Key.pressed=0;
+        if ((Key.update)&&(Key.pressed==0)) //按键中断flag;
         {
             EA = 0;
 
             Key_handler();
             IO_handler();
             Display_handler();
-
+            delay_ms(200);
             Key.update = 0;
             Key.long_press_state = 0;
         }
+
+        
 
         switch (state)
         {
@@ -111,7 +100,7 @@ void Start(void)
         case Power_down:
 
             DeviceInit();
-
+            Power.level=0;
             EA = 1;
             EX1 = 0;
             //disable other key interrupt
@@ -121,17 +110,16 @@ void Start(void)
 
             WAKE_CLKO |= 0x20;
             WAKE_CLKO |= 0x10;
-            EX1 = 1;
-            EA = 0;
-            Key.which_press = Key_Power;
-            Power.on = 1;
-            Power.level=0;
-
+           
+            
             state = Power_on;
             break;
 
 case Power_on:
             IO_Power=1;
+            Power.on = 1;
+       //     Key.update=1;
+          
             LED1=0xff;
             LED2=0xff;
             
@@ -143,8 +131,15 @@ case Power_on:
            
             display(LED2,GIRD2);
             display(LED1,GIRD1);
-            Power.level=1;
+            
+            
             Display_handler();
+
+            EX1 = 1;
+            EA = 0;
+            Key.pressed=1;
+            Key.update=0;
+
             state = idle_mode;
             break;
 

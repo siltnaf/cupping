@@ -10,4 +10,7 @@ void send1_Byte(unsigned char c);
 void Send1_String(char *s);
 void UART1_config();
 void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen);
+extern void Dump_value(u8 val);
+extern void Dump_AD(u8 channel);
+
 #endif
