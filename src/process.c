@@ -102,7 +102,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
     }*/
     
 
-      if (Key.debounce > 5)
+      if (Key.debounce > 4)
 
     {
 

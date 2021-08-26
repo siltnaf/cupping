@@ -3,8 +3,11 @@
 #if (Seril_Debug == 1)
 char UAR[20], temp, rec_flag = 0;
 signed char button_number[] = "0";
-unsigned char unicode_number[4] = {0};
-unsigned char consumer_number[] = "";
+
+unsigned char unicode_number[4]={0};
+unsigned char consumer_number[]=""; 
+
+
 
 //定时器2，波特率9600
 void Uart1_Init(void) //@11.0592MHz
@@ -126,6 +129,7 @@ void Dump_value(u8 val)
 void Dump_AD(unsigned long ad_value)
 {
 
+	ad_value=0x12345678;
 	unicode_number[3] = (ad_value);
 
 	unicode_number[2] = (ad_value >> 8);
@@ -133,12 +137,7 @@ void Dump_AD(unsigned long ad_value)
 	unicode_number[1] = (ad_value >> 16);
 	unicode_number[0] = (ad_value >> 24);
 
-	Dump_value(unicode_number[0]);
-	/* Dump_value(unicode_number[1]);
-
-	Dump_value(unicode_number[2]);
-	Dump_value(unicode_number[3]); */
-
-	/*  */ HexToAscii(unicode_number, consumer_number, 4);
-	// Send1_String(consumer_number);
+ 
+     HexToAscii(unicode_number, consumer_number, 4);
+	 Send1_String(consumer_number);
 }

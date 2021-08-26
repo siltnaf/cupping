@@ -13,4 +13,9 @@ void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen);
 extern void Dump_value(u8 val);
 extern void Dump_AD(unsigned long ad_value);
 
+extern unsigned char unicode_number[4];
+extern unsigned char consumer_number[]; 
+
+
+
 #endif

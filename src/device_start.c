@@ -60,7 +60,7 @@ void Start(void)
         
  
          sensor.ntc=0x12345678;
-        Dump_AD(sensor.ntc); 
+       // Dump_AD(sensor.ntc); 
 
         if (Time.update)
             Time_handler();
@@ -72,7 +72,7 @@ void Start(void)
             Key_handler();
             IO_handler();
             Display_handler();
-            delay_ms(200);
+            delay_ms(100);
             Key.update = 0;
             Key.long_press_state = 0;
         }
