@@ -112,17 +112,16 @@ void Start(void)
 
             DeviceInit();
 
-            EA = 1;
-            EX1 = 0;
+           
             //disable other key interrupt
             WAKE_CLKO &= 0xef; //disable other key interrupt
             WAKE_CLKO &= 0xdf; //disable other key interrupt
             PCON |= 0x02;      //sleep mode only power key can wake up
 
+            EX0=1;
+            EX1=1;
             WAKE_CLKO |= 0x20;
             WAKE_CLKO |= 0x10;
-            EX1 = 1;
-            EA = 0;
             Key.which_press = Key_Power;
             Power.on = 1;
             Power.level=0;
@@ -132,19 +131,8 @@ void Start(void)
 
 case Power_on:
             IO_Power=1;
-            LED1=0xff;
-            LED2=0xff;
-            
-            display(LED2,GIRD2);
-            display(LED1,GIRD1);
-            delay_ms(10000);
-            LED1=0x00;
-            LED2=0x00;
            
-            display(LED2,GIRD2);
-            display(LED1,GIRD1);
-            Power.level=1;
-            Display_handler();
+          
             state = idle_mode;
             break;
 

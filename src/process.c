@@ -23,14 +23,12 @@ void Time_handler(void) //Timer 0 is 50ms period,
         Time.sec++;
         Time.count = 0;
     }
-
     if (Time.sec > 59)
     {
         Time.sec = 0;
 
         Time.min++;
     }
-
     if (Time.min > 59)
     {
         Time.min = 0;
@@ -49,8 +47,6 @@ void Time_handler(void) //Timer 0 is 50ms period,
             Time.min=0;
             Display_handler();
         }
- 
-
      if ((Power.level==1) &&(Time.min >= Time1))
         {
             Power.level=0;
@@ -138,13 +134,7 @@ void Key_handler(void)
 
         state = Power_down;
 
-        //如果检测到长时间按键则打开电源及升压
-
-        //
-
-        //
-
-        //
+       
     }
     else
     {
@@ -153,18 +143,12 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-            // IO_PTC_LED=!IO_PTC_LED;
-            // PWM.value = 2000;
-            // LoadPWM(PWM.value);
-            // Timer2_init();
-            // Heating.on = !Heating.on; //启动IO_PTC加热
+           
             key_up(&Heating);
 
             break;
         case Key_Vibration:
-            // Vibration_LED=!Vibration_LED;
-
-            // IO_Vibration = !IO_Vibration;
+           
             key_up(&Vibration);
 
             break;
@@ -174,32 +158,9 @@ void Key_handler(void)
 
             break;
         case Key_Power:
-            //Power_LED=!Power_LED;
-
-            // IO_Valve = !IO_Valve;
+          
             key_up(&Power);
-            switch (Power.level)
-                {
-                case 0:
-                    state = Power_down;
-                    break;
-                case 1:
-                    duration = Time1;
-                   
-                    break;
-
-                case 2:
-                    duration = Time2+Time1;
-                    
-                    break;
-                case 3:
-                    duration = Time3+Time2+Time1;
-                   
-                    break;
-
-                default:
-                    break;
-                }
+         
             break;
             // -------------------------------
             // Default event handler.
@@ -228,23 +189,54 @@ void IO_handler(void)
     }
 
     if (Suction.on)
-        IO_Pump = 1;
+    {
+    IO_Pump = 1;
+    IO_Power=1;
+    Power.on=1;
+    Power.level=1;
+    duration=Time1;
+    }
+      
     else
     {
         IO_Pump = 0;
-        Suction.level = 0;
+       Power.on=0;
     }
 
-    if (state != Power_down)
+    if (Power.on)
     {
         IO_Power = 1;
+     switch (Power.level)
+                {
+                case 0:
+                        Power.level=1;
+                case 1:
+                    duration = Time1;
+                   
+                    break;
 
-        if (Power.level == 0)
-            Power.level = 1;
+                case 2:
+                    duration += Time2;
+                    
+                    break;
+                case 3:
+                    duration += Time3;
+                   
+                    break;
+
+                default:
+                    break;
+                }
+
     }
 
     else
-        IO_Power = 0;
+    {
+state=Power_down;
+
+
+    }
+       
 }
 
 void Display_handler(void)

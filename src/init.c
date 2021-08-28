@@ -63,6 +63,21 @@ void DeviceInit(void)
     Int3_init();
     Timer0_init();
 
+  IO_Power=1;
+            LED1=0xff;
+            LED2=0xff;
+            
+            display(LED2,GIRD2);
+            display(LED1,GIRD1);
+            delay_ms(10000);
+            LED1=0x00;
+            LED2=0x00;
+           
+            display(LED2,GIRD2);
+            display(LED1,GIRD1);
+         
+
+
 #if (Seril_Debug == 0)
     Timer2_init(); //use timer2 for PWM if UART is not use for debug
 #endif
