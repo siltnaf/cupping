@@ -95,10 +95,6 @@ typedef enum Button_type
 } BUTTON;
 
 
-<<<<<<< HEAD
-=======
-} STATE;
->>>>>>> 6929422cb2dec685163bedc43dc510772f404633
 
 typedef enum Treatment_time
 {
@@ -150,8 +146,7 @@ void Start(void);
 
 
 //初始化按键
-<<<<<<< HEAD
-extern Button_Status Key;
+extern BUTTON Key;
 extern Level Power, Vibration, Suction, Heating;
 extern Button_type Key_pressed;
 extern PWM_Status PWM;
@@ -162,17 +157,5 @@ extern Treatment_time duration;
 extern channel hx711channel,*hxsensor;
 extern unsigned long temperature[];
 extern unsigned long pressure[];
-=======
-extern BUTTON_STAT Key;
-extern LEVEL_STAT Power, Vibration, Suction, Heating;
-extern BUTTON Key_pressed;
-extern PWM_STAT PWM;
-extern TIMER_STAT Time;
-extern STATE state;
-extern COUNTER duration;
-extern SENSOR sensor;
-
-
->>>>>>> 6929422cb2dec685163bedc43dc510772f404633
 
 #endif
