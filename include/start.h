@@ -139,5 +139,6 @@ extern Treatment_time duration;
 
 extern channel hx711channel,*hxsensor;
 extern unsigned long temperature[];
+extern unsigned long pressure[];
 
 #endif

@@ -40,7 +40,23 @@ void service(void)
         Vibration.level = 0;
     }
 
+if (Suction.on)
+    {
 
+        if (sensor.pressure > (pressure[Suction.level]))
+            IO_PTC = 1;
+        else
+            IO_PTC = 0;
+        Dump_ad(sensor.pressure);
+        Dump_ad(pressure[Suction.level]);
+        Dump_value(IO_PTC);
+    }
+
+    else
+    {
+        IO_PTC = 0;
+        Suction.level = 0;
+    }
 
 
 }
