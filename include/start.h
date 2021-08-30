@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Seril_Debug 1
+#define Seril_Debug 0
 
 #include "stc12.h"
 #include "8051.h"
@@ -13,6 +13,8 @@ typedef unsigned int u16;
 #include "init.h"
 #include "interrupt.h"
 #include "process.h"
+#include "state.h"
+#include "debug.h"
 
 #if (Seril_Debug == 1)
 #include "uart.h"
@@ -38,14 +40,30 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define PWM_HIGH_MIN 32                        //??PWM????????????????
 #define PWM_HIGH_MAX (PWM_DUTY - PWM_HIGH_MIN) //??PWM????????????????
 
+
+
+//Sensor_init
+typedef struct HTI_sensor
+{
+unsigned long pressure;
+unsigned long temperature;
+}AD_sensor;
+
+typedef struct hx711
+{
+unsigned char P128 ;
+unsigned char T32;
+unsigned char P64;/*channel data */
+}channel;
+
+
 //自定义一个int结构体位域来解析按键：单次，双击，长按，等功能
 typedef struct Button_Setting
 {
     unsigned char update : 1;
     unsigned char pressed : 1;
-    unsigned char long_press : 4;
+    unsigned char lock:1;
     unsigned char long_press_state : 1;
-    unsigned char times;
     unsigned char debounce;
     unsigned char which_press;
 
@@ -63,24 +81,14 @@ typedef struct Program_Setting
 //define 4 buttons
 typedef enum Button_type
 {
-    Key_Power = 0x00,     //0x00
-    Key_Pump = 0x01,      //0x01
-    Key_Vibration = 0x02, //0x02
-    Key_PTC = 0x03        //0x03
+    Key_Power = 0x01,     //0x00
+    Key_Pump = 0x02,      //0x01
+    Key_Vibration = 0x03, //0x02
+    Key_PTC = 0x04        //0x03
 
 } Button_type;
 
-//State machine
-typedef enum State_name
-{
-    idle_mode,
-    normal_mode,
-    Timer_mode,
-    Power_down,
-    Power_on,
-    BT_mode,
 
-} State_name;
 
 typedef enum Treatment_time
 {
@@ -90,6 +98,11 @@ typedef enum Treatment_time
     Time3 = 1
 
 } Treatment_time;
+
+
+
+
+
 
 typedef struct PWM_Setting
 {
@@ -121,9 +134,10 @@ extern Level Power, Vibration, Suction, Heating;
 extern Button_type Key_pressed;
 extern PWM_Status PWM;
 extern Timer_Status Time;
-extern State_name state;
+extern AD_sensor sensor;
 extern Treatment_time duration;
 
-extern unsigned char state;
+extern channel hx711channel,*hxsensor;
+extern unsigned long temperature[];
 
 #endif

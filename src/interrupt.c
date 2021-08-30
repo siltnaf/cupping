@@ -65,7 +65,7 @@ void INT0_int(void) __interrupt INT0_VECTOR //进中断时已经清除标志
 {
     
      TimeReset();
-    Key_pressed = Key_Power;
+    if (Key.lock==0) Key_pressed = Key_Power; else Key_pressed=0;
     // LED1=!LED1;
     //EX0 = 0;	//INT0 Disable
     //IE0 = 0;	//外中断0标志位
@@ -76,7 +76,7 @@ void INT1_int(void) __interrupt INT1_VECTOR //进中断时已经清除标志
 {
     
     TimeReset();
-    Key_pressed = Key_Pump;
+    if (Key.lock==0) Key_pressed = Key_Pump; else Key_pressed=0;
     //LED2=!LED2;
     //EX1 = 0;	//INT1 Disable
     //IE1 = 0;	//外中断1标志位
@@ -86,7 +86,7 @@ void INT2_int(void) __interrupt INT2_VECTOR //进中断时已经清除标志
 {
     
      TimeReset();
-    Key_pressed = Key_Vibration;
+    if (Key.lock==0) Key_pressed = Key_Vibration; else Key_pressed=0;
     // LED2=!LED2;
     //EX1 = 0;	//INT1 Disable
     //IE1 = 0;	//外中断1标志位
@@ -98,7 +98,7 @@ void INT3_int(void) __interrupt INT3_VECTOR //进中断时已经清除标志
   
     TimeReset();
     
-    Key_pressed = Key_PTC;
+    if (Key.lock==0) Key_pressed = Key_PTC; else Key_pressed=0;
     // LED2=!LED2;
     //EX1 = 0;	//INT1 Disable
     //IE1 = 0;	//外中断1标志位

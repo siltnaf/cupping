@@ -7,7 +7,7 @@ void ParameterReset(void)
 
     //变量初始化
     IO_Pump = 0;
-    IO_Vibration = 1;
+    IO_Vibration = 0;
     IO_PTC = 0;
     IO_Valve = 1;
     IO_Power = 0;
@@ -51,7 +51,7 @@ void DeviceInit(void)
 
     ParameterReset();
 
-    state = Power_on;
+   
 
     Key.debounce = 0; //按键延时
     TR0 = 0;          //停止计数
@@ -63,20 +63,26 @@ void DeviceInit(void)
     Int3_init();
     Timer0_init();
 
-  IO_Power=1;
+            IO_Power=1;
             LED1=0xff;
             LED2=0xff;
             
             display(LED2,GIRD2);
             display(LED1,GIRD1);
-            delay_ms(10000);
+
+             delay_ms(30000);
+            
             LED1=0x00;
             LED2=0x00;
            
             display(LED2,GIRD2);
-            display(LED1,GIRD1);
+            display(LED1,GIRD1); 
+            IO_Power=0;
          
-
+    Key.lock=0;
+    Key.debounce=0;
+    Key.update=0;
+    state=idle_mode;
 
 #if (Seril_Debug == 0)
     Timer2_init(); //use timer2 for PWM if UART is not use for debug

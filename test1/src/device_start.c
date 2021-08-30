@@ -11,13 +11,10 @@ unsigned char unicode_number[4]={0};
 unsigned char consumer_number[]=""; 
 unsigned char button_number[]="";
 //hx711通道；
-typedef struct hx711
-{
-unsigned char A128 ;
-unsigned char B32;
-unsigned char A64;/*channel data */
-}hxchannel;
 
+ const unsigned char A128=24 ;
+ const unsigned char B32=25 ;
+const unsigned char A64=26 ;/*channel data */
 
  //自定义枚举4个按键按下时的值；发热键，电源键，气泵键，振动键
 enum Key
@@ -47,7 +44,6 @@ unsigned long ntc;
 
 //初始化按键
 HTI_button copping_button;
-hxchannel hx711channel,*hxsensor;
 void DeviceInit(void)
 {
 //变量初始化
@@ -60,10 +56,6 @@ void DeviceInit(void)
 PWM_ON=0;//按键延时
 TR0 = 0;	//停止计数
 ET0 = 0;	//停止计数中断
-hx711channel.A128=24;
-hx711channel.B32=25;
-hx711channel.A64=26;
-hxsensor=&hx711channel;
 }
 
 void Start(void)
@@ -92,11 +84,10 @@ DeviceInit();
 EA=1;
 
     while (1) {
-    HTI_sensor.pressure=HX711_Read(hxsensor->B32);
-    
- //HTI_sensor.pressure=HX711_Read(25);
-//       HTI_sensor.pressure=HTI_sensor.pressure*25/32/2^24;
-       gn1616_ms(1000);
+
+     HTI_sensor.pressure=(HX711_Read(25)&0x00ffffff);
+
+       gn1616_ms(500);
        unicode_number[3]=HTI_sensor.pressure;
       // send1_Byte(unicode_number[0]);
        unicode_number[2]=HTI_sensor.pressure>>8;

@@ -34,6 +34,10 @@ unsigned long HX711_Read(u8 channel)	//
     count=count^0x800000;//设置channel A 或 B
 	Delay__hx711_us();
 	HX711_SCK=0;  
+	if(count&0x800000)
+	{
+		count=0-((~count+1)&0x7fffff);
+	}
 
 	return(count);
 }
