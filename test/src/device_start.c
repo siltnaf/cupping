@@ -92,22 +92,33 @@ DeviceInit();
 EA=1;
 
     while (1) {
+<<<<<<< HEAD
     HTI_sensor.pressure=HX711_Read(hxsensor->B32);
     
  //HTI_sensor.pressure=HX711_Read(25);
 //       HTI_sensor.pressure=HTI_sensor.pressure*25/32/2^24;
        gn1616_ms(1000);
+=======
+
+     //HTI_sensor.pressure=(HX711_Read(25)&0x00ffffff);
+    HTI_sensor.pressure=0x12345678;
+       gn1616_ms(500);
+>>>>>>> 6929422cb2dec685163bedc43dc510772f404633
        unicode_number[3]=HTI_sensor.pressure;
-      // send1_Byte(unicode_number[0]);
+      
        unicode_number[2]=HTI_sensor.pressure>>8;
-    //send1_Byte(unicode_number[1]);
+      
        unicode_number[1]=HTI_sensor.pressure>>16;
        // send1_Byte(unicode_number[2]);
        unicode_number[0]=HTI_sensor.pressure>>24;
         //  send1_Byte(unicode_number[3]);
        HexToAscii(unicode_number, consumer_number, 4);
-       Send1_String("\r\nL+Hpressure=");//发送气压传感器 低 8位
-       Send1_String(consumer_number);
+
+
+ send1_Byte(consumer_number[0]);
+ 
+      // Send1_String("\r\nL+Hpressure=");//发送气压传感器 低 8位
+      // Send1_String(consumer_number);
 
        if(copping_button.stat)//按键中断flag;
        {

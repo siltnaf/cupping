@@ -32,6 +32,12 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define IO_Vibration P3_0
 #define IO_Valve P3_1
 
+
+#define IN_Power P3_2
+#define IN_Pump P3_3
+#define IN_Vibration P3_6
+#define IN_PTC P3_7
+
 #define Max_key 4
 
 #define PWM_DUTY 6000 //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
@@ -67,7 +73,7 @@ typedef struct Button_Setting
     unsigned char debounce;
     unsigned char which_press;
 
-} Button_Status;
+} BUTTON_STAT;
 
 //program setting
 typedef struct Program_Setting
@@ -76,7 +82,7 @@ typedef struct Program_Setting
     unsigned char level : 3;
     unsigned char timer : 4;
 
-} Level;
+} LEVEL_STAT;
 
 //define 4 buttons
 typedef enum Button_type
@@ -86,9 +92,13 @@ typedef enum Button_type
     Key_Vibration = 0x03, //0x02
     Key_PTC = 0x04        //0x03
 
-} Button_type;
+} BUTTON;
 
 
+<<<<<<< HEAD
+=======
+} STATE;
+>>>>>>> 6929422cb2dec685163bedc43dc510772f404633
 
 typedef enum Treatment_time
 {
@@ -97,7 +107,7 @@ typedef enum Treatment_time
     Time2 = 1,
     Time3 = 1
 
-} Treatment_time;
+} COUNTER;
 
 
 
@@ -110,7 +120,7 @@ typedef struct PWM_Setting
     unsigned int low;
     unsigned int high;
     unsigned int value;
-} PWM_Status;
+} PWM_STAT;
 
 typedef struct Timer_Setting
 {
@@ -123,12 +133,24 @@ typedef struct Timer_Setting
     unsigned char halfsec:1;
     unsigned char onesec:1;
 
-} Timer_Status;
+} TIMER_STAT;
+
+//Sensor_init
+typedef struct sensor_in
+{
+unsigned long pressure;
+unsigned long ntc;
+}SENSOR;
+
+
+
+
 
 void Start(void);
-extern void Dump_value(u8 val);
+
 
 //初始化按键
+<<<<<<< HEAD
 extern Button_Status Key;
 extern Level Power, Vibration, Suction, Heating;
 extern Button_type Key_pressed;
@@ -140,5 +162,17 @@ extern Treatment_time duration;
 extern channel hx711channel,*hxsensor;
 extern unsigned long temperature[];
 extern unsigned long pressure[];
+=======
+extern BUTTON_STAT Key;
+extern LEVEL_STAT Power, Vibration, Suction, Heating;
+extern BUTTON Key_pressed;
+extern PWM_STAT PWM;
+extern TIMER_STAT Time;
+extern STATE state;
+extern COUNTER duration;
+extern SENSOR sensor;
+
+
+>>>>>>> 6929422cb2dec685163bedc43dc510772f404633
 
 #endif
