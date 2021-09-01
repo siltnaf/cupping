@@ -112,32 +112,3 @@ void HexToAscii(unsigned char *pHex, unsigned char *pAscii, unsigned char nLen)
 	}	  // for (int i = ...)
 }
 
-void Dump_value(u8 val)
-{
-#if (Seril_Debug == 1)
-	Send1_String("debug value\r\n"); //有按键操作发送字
-
-	button_number[0] = val;
-	HexToAscii(button_number, button_number, 1);
-	Send1_String(button_number);
-	Send1_String("\r\n");
-
-	// Send1_String(button_number);
-#endif
-}
-
-void Dump_AD(unsigned long ad_value)
-{
-
-	ad_value=0x12345678;
-	unicode_number[3] = (ad_value);
-
-	unicode_number[2] = (ad_value >> 8);
-
-	unicode_number[1] = (ad_value >> 16);
-	unicode_number[0] = (ad_value >> 24);
-
- 
-     HexToAscii(unicode_number, consumer_number, 4);
-	 Send1_String(consumer_number);
-}

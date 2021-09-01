@@ -140,37 +140,16 @@ void Time_handler(void) //Timer 0 is 50ms period,
             Key.debounce = 0;
             Key.long_press_state = 0;
         }
-<<<<<<< HEAD
         else
-=======
-        
-    if (Key.long_press > 3)
-        {
-            
-            state=Power_down;
-           
-        } 
-    }*/
-    
-
-      if (Key.debounce > 4)
->>>>>>> 6929422cb2dec685163bedc43dc510772f404633
 
         {
 
-<<<<<<< HEAD
             Key.update = 0;
             Key.pressed = 0;
             Key.debounce = 0;
             Key.lock = 0;
             Key.long_press_state = 0;
         }
-=======
-        
-        Key.update=1;
-        Key.debounce = 0;
-        Key.long_press = 0;
->>>>>>> 6929422cb2dec685163bedc43dc510772f404633
     }
 
    
@@ -192,13 +171,7 @@ void Key_handler(void)
 
 {
 
-<<<<<<< HEAD
     Timer_Reset();
-=======
-
-    Key.which_press = Key_pressed;
-    if ((Key.which_press == Key_Power) && (Key.long_press_state))
->>>>>>> 6929422cb2dec685163bedc43dc510772f404633
 
     if (Key.long_press_state)
     {

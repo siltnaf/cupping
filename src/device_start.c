@@ -3,12 +3,12 @@
 
 unsigned long temperature[] = {0, 0x00490000, 0x00400000, 0x00300000};
 unsigned long pressure[]={0,0x00400000,0x00500000,0x00600000};
-Button_type Key_pressed;
-Button_Status Key; //初始化按键
-Level Power, Vibration, Suction, Heating;
-PWM_Status PWM;
-Timer_Status Time;
-Treatment_time duration;
+BUTTON Key_pressed;
+BUTTON_STAT Key; //初始化按键
+LEVEL_STAT Power, Vibration, Suction, Heating;
+PWM_STAT PWM;
+TIMER_STAT Time;
+COUNTER duration;
 
 channel hx711channel, *hxsensor;
 AD_sensor sensor;

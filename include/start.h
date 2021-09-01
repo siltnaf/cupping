@@ -142,17 +142,18 @@ unsigned long ntc;
 
 
 
+
 void Start(void);
 
 
 //初始化按键
-extern BUTTON Key;
+extern BUTTON Key_pressed;
 extern LEVEL_STAT Power, Vibration, Suction, Heating;
-extern BUTTON_STAT Key_pressed;
+extern BUTTON_STAT Key;
 extern PWM_STAT PWM;
 extern TIMER_STAT Time;
 extern AD_sensor sensor;
-extern Treatment_time duration;
+extern COUNTER duration;
 
 extern channel hx711channel,*hxsensor;
 extern unsigned long temperature[];
