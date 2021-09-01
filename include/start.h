@@ -147,10 +147,10 @@ void Start(void);
 
 //初始化按键
 extern BUTTON Key;
-extern Level Power, Vibration, Suction, Heating;
-extern Button_type Key_pressed;
-extern PWM_Status PWM;
-extern Timer_Status Time;
+extern LEVEL_STAT Power, Vibration, Suction, Heating;
+extern BUTTON_STAT Key_pressed;
+extern PWM_STAT PWM;
+extern TIMER_STAT Time;
 extern AD_sensor sensor;
 extern Treatment_time duration;
 

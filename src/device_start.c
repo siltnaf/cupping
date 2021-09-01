@@ -42,14 +42,14 @@ void Start(void)
 
         // Dump_ad(sensor_reading);
 
-       service();
+      // service();
 
         if (Time.update)
         {
-            if (Time.sec%2==0)
+            /* if (Time.sec%2==0)
                 sensor.temperature = HX711_Read(hxsensor->T32);
                 else 
-                sensor.pressure=HX711_Read(hxsensor->P64);
+                sensor.pressure=HX711_Read(hxsensor->P64); */
             Time_handler();
            
         }
@@ -80,7 +80,7 @@ void Start(void)
             Key.long_press_state = 0;
         }
 
-        state_machine();
+       // state_machine();
     }
 
     //
