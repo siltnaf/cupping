@@ -4,6 +4,16 @@
 unsigned char LED1, LED2;
 
 
+void PWM_update(void)
+{
+
+//if (PWM.counter >PWM.max_heating) PWM.heating=1;else PWM.heating=0;
+
+
+
+}
+
+
 void service(void)
 
 {
@@ -29,7 +39,7 @@ void service(void)
   if (Vibration.on)
         {
        IO_Vibration=1;
-       if (Vibration.level==1) IO_Vibration=Time.quartersec;
+       if (Vibration.level==1) IO_Vibration=Time.tick;
        if (Vibration.level==2) IO_Vibration=1;
        if (Vibration.level==3) IO_Vibration=1;
         }
@@ -70,9 +80,8 @@ void Timer_Reset(void)
 
 void Time_handler(void) //Timer 0 is 50ms period,
 {
-    Time.update = 0;
     Time.count++;
-    Time.quartersec=!Time.quartersec;
+    Time.tick=!Time.tick;
    /*  if ((Time.count%2)==0)
         Time.quartersec = 1;
         else Time.quartersec = 0; */

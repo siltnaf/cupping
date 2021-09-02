@@ -80,7 +80,6 @@ typedef struct Program_Setting
 {
     unsigned char on : 1;
     unsigned char level : 3;
-    unsigned char timer : 4;
 
 } LEVEL_STAT;
 
@@ -112,10 +111,11 @@ typedef enum Treatment_time
 
 typedef struct PWM_Setting
 {
-    unsigned char on : 1;
-    unsigned int low;
-    unsigned int high;
-    unsigned int value;
+    unsigned char on:1;
+    unsigned char heating:1;
+    unsigned char suction:1;
+    unsigned char vibration:1;
+    unsigned int  counter;
 } PWM_STAT;
 
 typedef struct Timer_Setting
@@ -125,7 +125,7 @@ typedef struct Timer_Setting
     unsigned char min;
     unsigned char count;
     unsigned char update : 1;
-    unsigned char quartersec : 1;
+    unsigned char tick : 1;
     unsigned char halfsec:1;
     unsigned char onesec:1;
 

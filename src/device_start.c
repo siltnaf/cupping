@@ -40,6 +40,7 @@ void Start(void)
         TR0 = 1;
         ET0 = 1;
 
+        
         // Dump_ad(sensor_reading);
 
       // service();

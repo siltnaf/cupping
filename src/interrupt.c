@@ -18,47 +18,18 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR      //150ms period
    
     if (Key.pressed==1)
         Key.debounce++;
-/* 
-    
-       
-    } */
+
 
    
 }
 
 void PWMTimer(void) __interrupt TIMER2_VECTOR
 {
-    PWM.on = !PWM.on;
-   
-    if (PWM.on == 1)
-    {
+    PWM.counter++;
 
-        T2H = (PWM.low >> 8); //LED on time is 10%
-        T2L = PWM.low;
-    }
-    else
-    {
-
-        T2H = (PWM.high >> 8); //LED off time is 90%
-        T2L = PWM.high;
-    }
+  
 }
 
-void LoadPWM(u16 i)
-{
-    u16 j;
-    AUXR &= ~(1 << 4); //stop counter
-    if (i > PWM_HIGH_MAX)
-        i = PWM_HIGH_MAX; //max range for PWM
-    if (i < PWM_HIGH_MIN)
-        i = PWM_HIGH_MIN;       //min range for PWM
-    j = 65536UL - PWM_DUTY + i; //low value for PWM
-    i = 65536UL - i;            //high value for PWM
-                                //    EA = 0;
-    PWM.high = i;               //
-    PWM.low = j;                //
-    //	EA=1;
-}
 
 /********************* INT0中断函数 *************************/
 void INT0_int(void) __interrupt INT0_VECTOR //进中断时已经清除标志

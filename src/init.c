@@ -51,8 +51,6 @@ void DeviceInit(void)
 
     ParameterReset();
 
-   
-
     Key.debounce = 0; //按键延时
     TR0 = 0;          //停止计数
     ET0 = 0;          //停止计数中断
@@ -63,30 +61,30 @@ void DeviceInit(void)
     Int3_init();
     Timer0_init();
 
-            IO_Power=1;
-            LED1=0xff;
-            LED2=0xff;
-            
-            display(LED2,GIRD2);
-            display(LED1,GIRD1);
+    IO_Power = 1;
+    LED1 = 0xff;
+    LED2 = 0xff;
 
-             delay_ms(30000);
-            
-            LED1=0x00;
-            LED2=0x00;
-           
-            display(LED2,GIRD2);
-            display(LED1,GIRD1); 
-            IO_Power=0;
-         
-    Key.lock=0;
-    Key.debounce=0;
-    Key.update=0;
-    state=idle_mode;
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
 
-#if (Seril_Debug == 0)
-    Timer2_init(); //use timer2 for PWM if UART is not use for debug
-#endif
+    delay_ms(30000);
+
+    LED1 = 0x00;
+    LED2 = 0x00;
+
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
+    IO_Power = 0;
+
+    Key.lock = 0;
+    Key.debounce = 0;
+    Key.update = 0;
+    state = idle_mode;
+
+
+    Timer2_init(); //use timer2 for PWM and UART
+
 }
 
 void Int0_init(void)
@@ -121,7 +119,7 @@ void Int3_init(void)
 // 返回: none.
 // 版本: V1.0, 2015-1-12
 //========================================================================
-  void Timer0_init(void)
+void Timer0_init(void)
 {
     TR0 = 0; //停止计数
 
@@ -153,12 +151,7 @@ void Int3_init(void)
 #else
 #error "Timer0设置的中断过慢!"
 #endif
-
-} 
- 
-
-
-
+}
 
 void Timer2_init(void)
 {
