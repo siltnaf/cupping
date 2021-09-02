@@ -2,11 +2,6 @@
 
 #if (Seril_Debug == 1)
 char UAR[20], temp, rec_flag = 0;
-signed char button_number[] = "0";
-
-unsigned char unicode_number[4]={0};
-unsigned char consumer_number[]=""; 
-
 
 
 //定时器2，波特率9600

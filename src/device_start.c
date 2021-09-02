@@ -2,7 +2,7 @@
 #include <start.h>
 
 unsigned long temperature[] = {0, 0x00490000, 0x00400000, 0x00300000};
-unsigned long pressure[]={0,0x00400000,0x00500000,0x00600000};
+unsigned long pressure[]={0,0x00500000,0x00600000};
 BUTTON Key_pressed;
 BUTTON_STAT Key; //初始化按键
 LEVEL_STAT Power, Vibration, Suction, Heating;
@@ -44,8 +44,9 @@ void Start(void)
         // Dump_ad(sensor_reading);
 
       // service();
+      Dump_value(Key.update);
 
-        if (Time.update)
+     if (Time.update)
         {
             /* if (Time.sec%2==0)
                 sensor.temperature = HX711_Read(hxsensor->T32);
@@ -54,13 +55,6 @@ void Start(void)
             Time_handler();
            
         }
-        else
-        {
-
-  
-
-        }
-
 
 
       //  else IO_handler();
@@ -69,7 +63,7 @@ void Start(void)
         {
             EA = 0;
             Key.which_press = Key_pressed;
-
+ 
             Key_handler();
             IO_handler();
 
