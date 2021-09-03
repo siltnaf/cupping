@@ -47,15 +47,17 @@ if (Suction.on)
             IO_PTC = 1;
         else
             IO_PTC = 0;
-        Dump_ad(sensor.pressure);
-        Dump_ad(pressure[Suction.level]);
-        Dump_value(IO_PTC);
+          /*   if (Suction.level==0)  
+                    state=Power_down;
+         */
+      
     }
 
     else
     {
         IO_PTC = 0;
         Suction.level = 0;
+       
     }
 
 

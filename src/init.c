@@ -51,8 +51,6 @@ void DeviceInit(void)
 
     ParameterReset();
 
-   
-
     Key.debounce = 0; //按键延时
     TR0 = 0;          //停止计数
     ET0 = 0;          //停止计数中断
@@ -62,27 +60,28 @@ void DeviceInit(void)
     Int2_init();
     Int3_init();
     Timer0_init();
+    Timer2_init();
 
-            IO_Power=1;
-            LED1=0xff;
-            LED2=0xff;
-            
-            display(LED2,GIRD2);
-            display(LED1,GIRD1);
+    IO_Power = 1;
+    LED1 = 0xff;
+    LED2 = 0xff;
 
-             delay_ms(30000);
-            
-            LED1=0x00;
-            LED2=0x00;
-           
-            display(LED2,GIRD2);
-            display(LED1,GIRD1); 
-            IO_Power=0;
-         
-    Key.lock=0;
-    Key.debounce=0;
-    Key.update=0;
-    state=idle_mode;
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
+
+    delay_ms(30000);
+
+    LED1 = 0x00;
+    LED2 = 0x00;
+
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
+    IO_Power = 0;
+
+    Key.lock = 0;
+    Key.debounce = 0;
+    Key.update = 0;
+    state = idle_mode;
 
 #if (Seril_Debug == 0)
     Timer2_init(); //use timer2 for PWM if UART is not use for debug
@@ -121,7 +120,7 @@ void Int3_init(void)
 // 返回: none.
 // 版本: V1.0, 2015-1-12
 //========================================================================
-  void Timer0_init(void)
+void Timer0_init(void)
 {
     TR0 = 0; //停止计数
 
@@ -153,22 +152,24 @@ void Int3_init(void)
 #else
 #error "Timer0设置的中断过慢!"
 #endif
-
-} 
- 
-
-
-
+}
 
 void Timer2_init(void)
 {
-    AUXR &= ~(1 << 4); //stop counter
+     AUXR &= ~(1 << 4); //stop counter
     IE2 |= (1 << 2);   //enable timer2 interrupt
     AUXR |= (1 << 2);  //set 1T
     AUXR &= ~(1 << 3); //set timer mode
                        //    INT_CLKO |=  0x04;  //output clock
-
-    T2H = 0;
-    T2L = 0;
+    T2L = 0xE0;				   //设置定时初始值
+	T2H = 0x00;				   //设置定时初始值
     AUXR |= (1 << 4); //start timer2
+
+  
+	
+
+
 }
+
+
+

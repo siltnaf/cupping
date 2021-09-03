@@ -28,7 +28,8 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR      //150ms period
 
 void PWMTimer(void) __interrupt TIMER2_VECTOR
 {
-    PWM.on = !PWM.on;
+   PWM.on=1;
+   /*  PWM.on = !PWM.on;
    
     if (PWM.on == 1)
     {
@@ -41,7 +42,7 @@ void PWMTimer(void) __interrupt TIMER2_VECTOR
 
         T2H = (PWM.high >> 8); //LED off time is 90%
         T2L = PWM.high;
-    }
+    } */
 }
 
 void LoadPWM(u16 i)

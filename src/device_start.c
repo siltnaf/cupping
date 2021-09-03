@@ -1,8 +1,8 @@
 
 #include <start.h>
 
-unsigned long temperature[] = {0, 0x00490000, 0x00400000, 0x00300000};
-unsigned long pressure[]={0,0x00400000,0x00500000,0x00600000};
+unsigned long temperature[] = {0,  0x00400000, 0x00300000};
+unsigned long pressure[]={0,0x00500000,0x00600000};
 Button_type Key_pressed;
 Button_Status Key; //初始化按键
 Level Power, Vibration, Suction, Heating;
@@ -41,28 +41,30 @@ void Start(void)
         ET0 = 1;
 
         // Dump_ad(sensor_reading);
+  Send1_String("STC15W204S\r\nUart is ok !\r\n");    
+       //service();
 
-       service();
+        if (PWM.on)
+            {
+                //IO_PTC=!IO_PTC;
+
+                PWM.on=0;
+            }
 
         if (Time.update)
         {
-            if (Time.sec%2==0)
+           /*  if (Time.sec%2==0)
                 sensor.temperature = HX711_Read(hxsensor->T32);
                 else 
-                sensor.pressure=HX711_Read(hxsensor->P64);
+                sensor.pressure=HX711_Read(hxsensor->P64); */
             Time_handler();
            
+           
         }
-        else
-        {
-
-  
-
-        }
+      
 
 
 
-      //  else IO_handler();
 
         if ((Key.update) || (Key.long_press_state)) //按键中断flag;
         {
@@ -80,7 +82,7 @@ void Start(void)
             Key.long_press_state = 0;
         }
 
-        state_machine();
+        //state_machine();
     }
 
     //
