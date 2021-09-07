@@ -54,10 +54,19 @@ void Start(void)
     Send1_String("STC15W204S\r\nUart is ok !\r\n");      //发送字符串检测是否初始化成功
     Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n"); //发送字符串检测是否初始化成功
 #endif
+    
+     
+         
+    
+    
+    
+    
+    
     Key.update = 0;
     Key.long_press_state = 0;
-
-    IO_Power = 1;
+    
+    state=Power_down;
+   
 
 
     while (1)

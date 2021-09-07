@@ -69,21 +69,7 @@ void DeviceInit(void)
 
 
  //   Timer2_init();
-/* 
-            IO_Power=1;
-            LED1=0xff;
-            LED2=0xff;
-            
-            display(LED2,GIRD2);
-            display(LED1,GIRD1);
 
-             delay_ms(30000);
-            
-            LED1=0x00;
-            LED2=0x00;
-           
-            display(LED2,GIRD2);
-            display(LED1,GIRD1);  */
           
          
     Key.lock=0;
