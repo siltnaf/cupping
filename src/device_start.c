@@ -1,8 +1,6 @@
 
 #include <start.h>
 
-unsigned long temperature[] = {0, 0x00490000, 0x00400000, 0x00300000};
-unsigned long pressure[] = {0, 0x00400000, 0x00500000, 0x00600000};
 Button_type Key_pressed;
 Button_Status Key; //初始化按键
 Level Power, Vibration, Suction, Heating;
@@ -25,8 +23,12 @@ if (this_pwm->timer < this_pwm->duty) //高电平时间
     {
         this_pwm->output = 0; /* 低电平时间code */
     }
-    if (this_pwm->timer > 100) //pwm占空比设定为100%
-        this_pwm->timer = 0;
+    if (this_pwm->timer >= 100) //pwm占空比设定为100%
+        {
+ this_pwm->timer = 0;
+this_pwm->output=0; 
+        }
+       
 if (this_pwm->duty==100) this_pwm->output=1;
 
 
@@ -57,28 +59,30 @@ void Start(void)
 
     IO_Power = 1;
 
+
     while (1)
     {
-        Timer2_init();
+      
         EA = 1;
         TR0 = 1;
         ET0 = 1;
 
  
 
-       // service();
+        service();
 
        
+       
     
-      /*   if (Time.PWM==1)
+         if (Time.PWM==1)
         {
-    
+            check_pwm(&Vibration);   
              check_pwm(&Heating);
              check_pwm(&Suction);
-             check_pwm(&Vibration);   
+ 
            
             Time.PWM=0;
-        } */
+        } 
 
         if (Time.update)
         {
@@ -88,12 +92,8 @@ void Start(void)
                 sensor.pressure=HX711_Read(hxsensor->P64); */
             Time_handler();
         }
-        else
-        {
-        }
-
-        //  else IO_handler();
-
+     
+ 
         if ((Key.update) || (Key.long_press_state)) //按键中断flag;
         {
             EA = 0;

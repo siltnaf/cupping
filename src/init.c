@@ -23,6 +23,10 @@ void ParameterReset(void)
     Heating.level = 0;
     Vibration.level = 0;
 
+    Suction.timer=0;
+    Vibration.timer=0;
+    Heating.timer=0;
+
     Time.sec = 0;
     Time.min = 0;
     Time.count = 0;
@@ -161,16 +165,30 @@ void Int3_init(void)
 
 
 
-void Timer2_init(void) //50微秒@11.0592MHz
+
+void Timer2_init(void)
 {
+/*--------------------------------------
+Set Timer2 for 16-bit auto-reload.
+The timer counts to 0xFFFF, overflows,
+is reloaded, and generates an interrupt.
+--------------------------------------*/
 
-    AUXR &= ~0x1c;          ////停止计数, 定时模式, 1T模式
-    AUXR |= 0x04;           //定时器时钟1T模式
-    WAKE_CLKO &= ~(1 << 2); //第3位是t2映射的时钟输出脚P3.0,所以将1左移2位取反运算为0:不允许P3.0输出T2时钟；
-    T2L = 0x33;             //设置定时初始值
-    T2H = 0xF5;             //设置定时初始值
-    AUXR |= 0x10;           //定时器2开始计时	等于1左移4位，AUXR |= (1<<4);
-    IE2 |= 0x04;            //定时器2允许中断
 
+/*--------------------------------------
+Set the reload values to be 1000 clocks.
+--------------------------------------*/
+
+AUXR |= 0x01;			   //串口1选择定时器2为波特率发生器
+	AUXR |= 0x04;			   //定时器时钟1T模式
+	T2L = 0xE0;				   //设置定时初始值
+	T2H = 0xFE;				   //设置定时初始值
+	AUXR |= 0x10;			   //定时器2开始计时
+
+
+
+IE2 |= 0x04;                      /* Enable Timer 2 Interrupts */
+AUXR=0x10   ;                  /* Start Timer 2 Running */
+	
 
 }

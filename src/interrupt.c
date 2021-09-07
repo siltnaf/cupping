@@ -28,8 +28,7 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR      //150ms period
 
 void PWMTimer(void) __interrupt TIMER2_VECTOR
 {
-Time.PWM=1;
-      IO_PTC = !IO_PTC; 
+    Time.PWM=1;
 }
 
 

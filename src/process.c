@@ -3,19 +3,20 @@
 
 unsigned char LED1, LED2;
 
-
 void service(void)
 
 {
 
-  if (Heating.on)
+    if (Heating.on)
     {
+        if (Heating.level == 1)
+            Heating.duty = 50;
+        if (Heating.level == 2)
+            Heating.duty = 60;
+        if (Heating.level == 3)
+            Heating.duty = 70;
 
-        if (sensor.temperature > (temperature[Heating.level]))
-            IO_PTC = 1;
-        else
-            IO_PTC = 0;
- 
+        IO_PTC = Heating.output;
     }
 
     else
@@ -24,23 +25,23 @@ void service(void)
         Heating.level = 0;
     }
 
-  if (Vibration.on)
-        {
-       IO_Vibration=1;
-       if (Vibration.level==1) IO_Vibration=1;
-       if (Vibration.level==2) IO_Vibration=1;
-       if (Vibration.level==3) IO_Vibration=1;
-        }
-        
+    if (Vibration.on)
+    {
+        if (Vibration.level == 1)
+            Vibration.duty = 40;
+        if (Vibration.level == 2)
+            Vibration.duty = 60;
+        if (Vibration.level == 3)
+            Vibration.duty = 100;
+
+        IO_Vibration = Vibration.output;
+    }
+
     else
     {
         IO_Vibration = 0;
         Vibration.level = 0;
     }
-
-
-
-
 }
 
 void Timer_Reset(void)
@@ -54,8 +55,8 @@ void Time_handler(void) //Timer 0 is 50ms period,
 {
     Time.update = 0;
     Time.count++;
- 
-   /*  if ((Time.count%2)==0)
+
+    /*  if ((Time.count%2)==0)
         Time.quartersec = 1;
         else Time.quartersec = 0; */
 
@@ -133,8 +134,6 @@ void Time_handler(void) //Timer 0 is 50ms period,
             Key.long_press_state = 0;
         }
     }
-
-   
 }
 
 void key_up(Level *this_key)
@@ -217,45 +216,41 @@ void Key_handler(void)
 
 void IO_handler(void)
 {
-  
-service();
 
-   
-if (Power.on)
-            {
-                IO_Power = 1;
+    service();
 
-                switch (Power.level)
-                {
-                case 0:
-                    Power.level = 1;
-                case 1:
-                    duration = Time1;
+    if (Power.on)
+    {
+        IO_Power = 1;
 
-                    break;
+        switch (Power.level)
+        {
+        case 0:
+            Power.level = 1;
+        case 1:
+            duration = Time1;
 
-                case 2:
-                    duration += Time2;
+            break;
 
-                    break;
-                case 3:
-                    duration += Time3;
+        case 2:
+            duration += Time2;
 
-                    break;
+            break;
+        case 3:
+            duration += Time3;
 
-                default:
-                    break;
-                }
-            }
+            break;
 
-            else
-            {
+        default:
+            break;
+        }
+    }
 
-                state = Power_down;
-            }
+    else
+    {
 
-      
-    
+        state = Power_down;
+    }
 }
 
 void Display_handler(void)
