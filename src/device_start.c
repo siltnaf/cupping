@@ -76,13 +76,8 @@ void Start(void)
         TR0 = 1;
         ET0 = 1;
 
- 
-
         service();
-
-       
   
-    
          if (Time.PWM==1)
         {
             check_pwm(&Vibration);   
