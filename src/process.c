@@ -10,14 +10,12 @@ void service(void)
 
   if (Heating.on)
     {
+       if (Heating.level==1) Heating.duty=30;
+       if (Heating.level==2) Heating.duty=40;
+       if (Heating.level==3) Heating.duty=50;
 
-        if (sensor.temperature > (temperature[Heating.level]))
-            IO_PTC = 1;
-        else
-            IO_PTC = 0;
-        Dump_ad(sensor.temperature);
-        Dump_ad(temperature[Heating.level]);
-        Dump_value(IO_PTC);
+       if (Heating.duty=100) Heating.output=1;
+       IO_Vibration=Heating.output;
     }
 
     else
@@ -28,10 +26,13 @@ void service(void)
 
   if (Vibration.on)
         {
-       IO_Vibration=1;
-       if (Vibration.level==1) IO_Vibration=Time.quartersec;
-       if (Vibration.level==2) IO_Vibration=1;
-       if (Vibration.level==3) IO_Vibration=1;
+     
+       if (Vibration.level==1) Vibration.duty=30;
+       if (Vibration.level==2) Vibration.duty=60;
+       if (Vibration.level==3) Vibration.duty=100;
+
+       if (Vibration.duty=100) Vibration.output=1;
+       IO_Vibration=Vibration.output;
         }
         
     else
@@ -74,10 +75,8 @@ void Time_handler(void) //Timer 0 is 50ms period,
 {
     Time.update = 0;
     Time.count++;
-    Time.quartersec=!Time.quartersec;
-   /*  if ((Time.count%2)==0)
-        Time.quartersec = 1;
-        else Time.quartersec = 0; */
+    
+
 
     if (Time.count > 19)
     {

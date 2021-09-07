@@ -34,19 +34,13 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 
 #define Max_key 4
 
-#define PWM_DUTY 6000 //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
-#define PWM_DUTY1 4000
-#define PWM_DUTY2 5000
-#define PWM_HIGH_MIN 32                        //??PWM????????????????
-#define PWM_HIGH_MAX (PWM_DUTY - PWM_HIGH_MIN) //??PWM????????????????
-
-
+ 
 
 //Sensor_init
 typedef struct HTI_sensor
 {
-unsigned long pressure;
-unsigned long temperature;
+unsigned char pressure;
+unsigned char temperature;
 }AD_sensor;
 
 typedef struct hx711
@@ -74,7 +68,9 @@ typedef struct Program_Setting
 {
     unsigned char on : 1;
     unsigned char level : 3;
-    unsigned char timer : 4;
+    unsigned char duty;
+    unsigned char timer;
+    unsigned char output:1;
 
 } Level;
 
@@ -101,16 +97,7 @@ typedef enum Treatment_time
 
 
 
-
-
-
-typedef struct PWM_Setting
-{
-    unsigned char on : 1;
-    unsigned int low;
-    unsigned int high;
-    unsigned int value;
-} PWM_Status;
+ 
 
 typedef struct Timer_Setting
 {
@@ -119,7 +106,7 @@ typedef struct Timer_Setting
     unsigned char min;
     unsigned char count;
     unsigned char update : 1;
-    unsigned char quartersec : 1;
+    unsigned char pwm: 1;
     unsigned char halfsec:1;
     unsigned char onesec:1;
 
@@ -132,7 +119,7 @@ extern void Dump_value(u8 val);
 extern Button_Status Key;
 extern Level Power, Vibration, Suction, Heating;
 extern Button_type Key_pressed;
-extern PWM_Status PWM;
+ 
 extern Timer_Status Time;
 extern AD_sensor sensor;
 extern Treatment_time duration;

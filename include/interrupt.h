@@ -2,7 +2,7 @@
 #define __INTERRUPT_H
 #include <start.h>
 
-void LoadPWM(u16 i);
+ 
 void KeyTimer(void) __interrupt TIMER0_VECTOR;
 void PWMTimer(void)__interrupt TIMER2_VECTOR;
 void INT0_int(void)__interrupt INT0_VECTOR;
