@@ -2,7 +2,7 @@
 #include <start.h>
 
 unsigned long temperature[] = {0,  0x00400000, 0x00300000};
-unsigned long pressure[]={0,0x00500000,0x00600000};
+unsigned long pressure[]={0,0x00600000};
 Button_type Key_pressed;
 Button_Status Key; //初始化按键
 Level Power, Vibration, Suction, Heating;
