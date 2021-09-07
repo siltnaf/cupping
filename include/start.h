@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Seril_Debug 1
+#define Seril_Debug 0
 
 #include "stc12.h"
 #include "8051.h"
@@ -34,19 +34,21 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 
 #define Max_key 4
 
-#define PWM_DUTY 6000 //??PWM???,????????,????24.576MHZ???,?PWM???6000HZ?
-#define PWM_DUTY1 4000
-#define PWM_DUTY2 5000
-#define PWM_HIGH_MIN 32                        //??PWM????????????????
-#define PWM_HIGH_MAX (PWM_DUTY - PWM_HIGH_MIN) //??PWM????????????????
+#define Low_suction   0x58
+#define Med_suction   0x48
+#define High_suction  0x38
 
+#define suction_bound 0x08
+#define suction_release 0x78
 
 
 //Sensor_init
 typedef struct HTI_sensor
 {
-unsigned long pressure;
-unsigned long temperature;
+unsigned char pressure;
+unsigned char temperature;
+unsigned char pressure_inrange:1;
+unsigned char temperature_inrange:1;
 }AD_sensor;
 
 typedef struct hx711
@@ -115,7 +117,7 @@ typedef struct Timer_Setting
     unsigned char count;
     unsigned char update : 1;
     unsigned char PWM : 1;
-    unsigned char halfsec:1;
+    unsigned char reading:1;
     unsigned char onesec:1;
 
 } Timer_Status;

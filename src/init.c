@@ -66,8 +66,10 @@ void DeviceInit(void)
     Int2_init();
     Int3_init();
     Timer0_init();
-    Timer2_init();
 
+
+ //   Timer2_init();
+/* 
             IO_Power=1;
             LED1=0xff;
             LED2=0xff;
@@ -81,8 +83,8 @@ void DeviceInit(void)
             LED2=0x00;
            
             display(LED2,GIRD2);
-            display(LED1,GIRD1); 
-            IO_Power=0;
+            display(LED1,GIRD1);  */
+          
          
     Key.lock=0;
     Key.debounce=0;
@@ -179,6 +181,7 @@ is reloaded, and generates an interrupt.
 Set the reload values to be 1000 clocks.
 --------------------------------------*/
 
+
 AUXR |= 0x01;			   //串口1选择定时器2为波特率发生器
 	AUXR |= 0x04;			   //定时器时钟1T模式
 	T2L = 0xE0;				   //设置定时初始值
@@ -189,6 +192,6 @@ AUXR |= 0x01;			   //串口1选择定时器2为波特率发生器
 
 IE2 |= 0x04;                      /* Enable Timer 2 Interrupts */
 AUXR=0x10   ;                  /* Start Timer 2 Running */
-	
+
 
 }

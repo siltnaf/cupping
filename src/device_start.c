@@ -48,7 +48,7 @@ void Start(void)
     hx711channel.P64 = 26;  //A通道64
     hxsensor = &hx711channel;
 
-    sensor.temperature = HX711_Read(hxsensor->T32);
+    sensor.pressure = HX711_Read(hxsensor->P64);
 
 #if (Seril_Debug == 1)
     Send1_String("STC15W204S\r\nUart is ok !\r\n");      //发送字符串检测是否初始化成功
@@ -72,28 +72,31 @@ void Start(void)
         service();
 
        
-       
+  
     
          if (Time.PWM==1)
         {
             check_pwm(&Vibration);   
              check_pwm(&Heating);
              check_pwm(&Suction);
- 
+          
            
             Time.PWM=0;
         } 
 
         if (Time.update)
         {
-            /*  if (Time.sec%2==0)
-                sensor.temperature = HX711_Read(hxsensor->T32);
-                else 
-                sensor.pressure=HX711_Read(hxsensor->P64); */
-            Time_handler();
+              Time_handler();
+            
+
+              //  Dump_value(sensor.pressure);
+          
         }
-     
- 
+        if (Time.reading==1)
+            {
+            sensor.pressure=HX711_Read(hxsensor->P64)>>16;
+            Time.reading=0;
+            }
         if ((Key.update) || (Key.long_press_state)) //按键中断flag;
         {
             EA = 0;
