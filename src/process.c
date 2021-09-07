@@ -42,6 +42,59 @@ void service(void)
         IO_Vibration = 0;
         Vibration.level = 0;
     }
+
+    if (Suction.level==0)
+        {
+                if (sensor.pressure<suction_release)
+                    IO_Valve=0;
+                    else IO_Valve=1;
+
+        }
+
+    if (Suction.on)
+    {
+        IO_Pump = Suction.output;
+        if (Suction.level == 1)
+        {
+            if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0))
+                Suction.duty = 30;
+            else
+            {
+                Suction.duty = 0;
+                sensor.pressure_inrange = 1;
+            }
+
+            if ((sensor.pressure) > (Low_suction + suction_bound))
+                sensor.pressure_inrange = 0;
+        }
+        if (Suction.level == 2)
+        {
+            if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0))
+                Suction.duty = 60;
+            else
+            {
+                Suction.duty = 0;
+                sensor.pressure_inrange = 1;
+            }
+
+            if ((sensor.pressure) > (Med_suction + suction_bound))
+                sensor.pressure_inrange = 0;
+        }
+
+        if (Suction.level == 3)
+        {
+            if ((sensor.pressure > High_suction) && (sensor.pressure_inrange == 0))
+                Suction.duty = 100;
+            else
+            {
+                Suction.duty = 0;
+                sensor.pressure_inrange = 1;
+            }
+
+            if ((sensor.pressure) > (High_suction + suction_bound))
+                sensor.pressure_inrange = 0;
+        }
+    }
 }
 
 void Timer_Reset(void)
@@ -56,13 +109,13 @@ void Time_handler(void) //Timer 0 is 50ms period,
     Time.update = 0;
     Time.count++;
 
-    /*  if ((Time.count%2)==0)
-        Time.quartersec = 1;
-        else Time.quartersec = 0; */
+
+    if ((Time.count%9)==0) Time.reading=1;
 
     if (Time.count > 19)
     {
         Time.sec++;
+        
         Time.count = 0;
     }
     if (Time.sec > 59)
@@ -102,7 +155,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
         if (Key.lock == 0)
             Key.debounce++;
 
-        if (Key.debounce > 30)
+        if (Key.debounce > 50)
         {
 
             Key.update = 1;
@@ -212,6 +265,8 @@ void Key_handler(void)
         default:
             break;
         }
+
+
 }
 
 void IO_handler(void)
