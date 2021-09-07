@@ -15,9 +15,7 @@ void service(void)
             IO_PTC = 1;
         else
             IO_PTC = 0;
-        Dump_ad(sensor.temperature);
-        Dump_ad(temperature[Heating.level]);
-        Dump_value(IO_PTC);
+ 
     }
 
     else
@@ -29,7 +27,7 @@ void service(void)
   if (Vibration.on)
         {
        IO_Vibration=1;
-       if (Vibration.level==1) IO_Vibration=Time.quartersec;
+       if (Vibration.level==1) IO_Vibration=1;
        if (Vibration.level==2) IO_Vibration=1;
        if (Vibration.level==3) IO_Vibration=1;
         }
@@ -56,7 +54,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
 {
     Time.update = 0;
     Time.count++;
-    Time.quartersec=!Time.quartersec;
+ 
    /*  if ((Time.count%2)==0)
         Time.quartersec = 1;
         else Time.quartersec = 0; */

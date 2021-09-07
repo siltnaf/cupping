@@ -62,6 +62,7 @@ void DeviceInit(void)
     Int2_init();
     Int3_init();
     Timer0_init();
+    Timer2_init();
 
             IO_Power=1;
             LED1=0xff;
@@ -160,15 +161,16 @@ void Int3_init(void)
 
 
 
-void Timer2_init(void)
+void Timer2_init(void) //50微秒@11.0592MHz
 {
-    AUXR &= ~(1 << 4); //stop counter
-    IE2 |= (1 << 2);   //enable timer2 interrupt
-    AUXR |= (1 << 2);  //set 1T
-    AUXR &= ~(1 << 3); //set timer mode
-                       //    INT_CLKO |=  0x04;  //output clock
 
-    T2H = 0;
-    T2L = 0;
-    AUXR |= (1 << 4); //start timer2
+    AUXR &= ~0x1c;          ////停止计数, 定时模式, 1T模式
+    AUXR |= 0x04;           //定时器时钟1T模式
+    WAKE_CLKO &= ~(1 << 2); //第3位是t2映射的时钟输出脚P3.0,所以将1左移2位取反运算为0:不允许P3.0输出T2时钟；
+    T2L = 0x33;             //设置定时初始值
+    T2H = 0xF5;             //设置定时初始值
+    AUXR |= 0x10;           //定时器2开始计时	等于1左移4位，AUXR |= (1<<4);
+    IE2 |= 0x04;            //定时器2允许中断
+
+
 }
