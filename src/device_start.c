@@ -75,6 +75,7 @@ void Start(void)
         EA = 1;
         TR0 = 1;
         ET0 = 1;
+        
 
         service();
   
@@ -97,17 +98,15 @@ void Start(void)
         if (Time.update)
         {
               Time_handler();
-            
-
-              //  Dump_value(sensor.pressure);
-          
+   
         }
         if (Time.reading==1)
             {
             sensor.pressure=HX711_Read(hxsensor->P64)>>16;
             Time.reading=0;
             }
-        if ((Key.update) || (Key.long_press_state)) //按键中断flag;
+      
+        if ((Key.update && Key.release) ||Key.long_press_state) //按键中断flag;
         {
             EA = 0;
             Key.which_press = Key_pressed;
@@ -117,8 +116,7 @@ void Start(void)
 
             Display_handler();
 
-            Key.update = 0;
-            Key.long_press_state = 0;
+         
         }
 
         state_machine();

@@ -31,6 +31,7 @@ void ParameterReset(void)
     Time.min = 0;
     Time.count = 0;
 
+    Key.release=1;
     LED1 = 0;
     LED2 = 0;
 }

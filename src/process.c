@@ -96,6 +96,13 @@ void service(void)
                 sensor.pressure_inrange = 0;
         }
     }
+    else
+    {
+        IO_Pump = 0;
+        Suction.level = 0;
+        Heating.level=0;
+        Vibration.level=0;
+    }
 }
 
 void Timer_Reset(void)
@@ -151,43 +158,39 @@ void Time_handler(void) //Timer 0 is 50ms period,
         Time.min = 0;
     }
 
-    if ((!INT0) || (!INT1) || (!INT2) || (!INT3)) //if one of the key is release timer is reset
-    {
-        if (Key.lock == 0)
-            Key.debounce++;
 
-        if (Key.debounce > 50)
+
+   
+
+        if ((!INT0) || (!INT1) || (!INT2) || (!INT3)) //if one of the key is release timer is reset
         {
+            //if key is pressed and debounce time >3 s, keyupdate will be enable
 
-            Key.update = 1;
-            Key.long_press_state = 1;
-            Key.debounce = 0;
+            if (Key.debounce > 50) 
+            {
+
+            
+                
+                Key.update = 1;
+                Key.long_press_state = 1;
+                Key.debounce = 50;
+            }
         }
-    }
 
-    else
-    {
-
-        if ((Key.debounce > 4) && (Key.debounce < 50))
-
-        {
-
-            Key.update = 1;
-            Key.pressed = 0;
-            Key.debounce = 0;
-            Key.long_press_state = 0;
-        }
         else
+        { // key is release. now check the press time in valid range, the keyupdate will be enable
 
-        {
+            if ((Key.debounce > 6) && (Key.debounce < 50))
+                Key.update = 1;
+            else
+                Key.update = 0;
 
-            Key.update = 0;
-            Key.pressed = 0;
+            Key.pressed=0;          
+            
             Key.debounce = 0;
-            Key.lock = 0;
             Key.long_press_state = 0;
         }
-    }
+    
 }
 
 void key_up(Level *this_key)
@@ -210,8 +213,7 @@ void Key_handler(void)
 
     if (Key.long_press_state)
     {
-        Key.long_press_state = 0;
-        Key.lock = 1;
+
         switch (Key.which_press)
         {
 
@@ -252,7 +254,7 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-
+  
             key_up(&Suction);
 
             break;
@@ -266,6 +268,9 @@ void Key_handler(void)
         default:
             break;
         }
+
+    Key.update = 0;
+    Key.long_press_state = 0;
 }
 
 void IO_handler(void)
