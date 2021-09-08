@@ -31,7 +31,7 @@ void ParameterReset(void)
     Time.min = 0;
     Time.count = 0;
 
-    Key.release=1;
+   
     LED1 = 0;
     LED2 = 0;
 }
@@ -73,7 +73,7 @@ void DeviceInit(void)
 
           
          
-    Key.lock=0;
+   
     Key.debounce=0;
     Key.update=0;
     state=idle_mode;

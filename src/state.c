@@ -25,7 +25,7 @@ void state_machine(void)
  
         
         DeviceInit();
-        Key.lock=0;
+     
         Key.update=0;
         Key.pressed=0;
         Key.debounce=0;

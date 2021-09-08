@@ -166,7 +166,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
         {
             //if key is pressed and debounce time >3 s, keyupdate will be enable
 
-            if (Key.debounce > 50) 
+            if (Key.debounce > 30) 
             {
 
             
@@ -180,7 +180,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
         else
         { // key is release. now check the press time in valid range, the keyupdate will be enable
 
-            if ((Key.debounce > 6) && (Key.debounce < 50))
+            if ((Key.debounce > 4) && (Key.debounce < 30))
                 Key.update = 1;
             else
                 Key.update = 0;

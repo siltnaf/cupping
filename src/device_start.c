@@ -106,7 +106,7 @@ void Start(void)
             Time.reading=0;
             }
       
-        if ((Key.update && Key.release) ||Key.long_press_state) //按键中断flag;
+        if (Key.update  ||Key.long_press_state) //按键中断flag;
         {
             EA = 0;
             Key.which_press = Key_pressed;

@@ -67,9 +67,8 @@ typedef struct Button_Setting
 {
     unsigned char update : 1;
     unsigned char pressed : 1;
-    unsigned char lock:1;
     unsigned char long_press_state : 1;
-    unsigned char release:1;
+   
     unsigned char debounce;
     unsigned char which_press;
 
