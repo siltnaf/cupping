@@ -3,13 +3,13 @@
 
 unsigned char LED1, LED2;
 
-void service(void)
+void service(void) //background service running all the time
 
 {
 
     if (Heating.on)
     {
-        if (Heating.level == 1)
+        if (Heating.level == 1) //set duty for heating PTC power
             Heating.duty = 50;
         if (Heating.level == 2)
             Heating.duty = 60;
@@ -21,29 +21,29 @@ void service(void)
 
     else
     {
-        IO_PTC = 0;
+        IO_PTC = 0; // if Heating is off , reset the level to 0
         Heating.level = 0;
     }
 
     if (Vibration.on)
     {
-        if (Vibration.level == 1)
+        if (Vibration.level == 1) //use Timer2, create 50 HZ pulse
             Time.Hzmax = Hz_50;
         if (Vibration.level == 2)
-            Time.Hzmax = Hz_30;
+            Time.Hzmax = Hz_30; //use Timer2, create 30 HZ pulse
         if (Vibration.level == 3)
-            Time.Hzmax = Hz_20;
+            Time.Hzmax = Hz_20; //use Timer2, create 20 HZ pulse
 
         IO_Vibration = Time.Hzout;
     }
 
     else
     {
-        IO_Vibration = 0;
+        IO_Vibration = 0; // if Vibration is off , reset the level to 0
         Vibration.level = 0;
     }
 
-    if (Suction.level == 0)
+    if (Suction.level == 0) // if suction is off , release the pressure through valve
     {
         if (sensor.pressure < suction_release)
             IO_Valve = 0;
@@ -57,51 +57,51 @@ void service(void)
         IO_Pump = Suction.output;
         if (Suction.level == 1)
         {
-            if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0))
-                Suction.duty = 100;
+            if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
+                Suction.duty = 100;                                                //use 100% duty for pump power
             else
             {
-                Suction.duty = 0;
+                Suction.duty = 0; //stop the pump if pressure exceed the level
                 sensor.pressure_inrange = 1;
             }
 
-            if ((sensor.pressure) > (Low_suction + suction_bound))
+            if ((sensor.pressure) > (Low_suction + suction_bound)) //reactivate the pump if pressure is below the lower boundary
                 sensor.pressure_inrange = 0;
         }
         if (Suction.level == 2)
         {
-            if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0))
-                Suction.duty = 100;
+            if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
+                Suction.duty = 100;                                                //use 100% duty for pump power
             else
             {
-                Suction.duty = 0;
+                Suction.duty = 0; //stop the pump if pressure exceed the level
                 sensor.pressure_inrange = 1;
             }
 
-            if ((sensor.pressure) > (Med_suction + suction_bound))
+            if ((sensor.pressure) > (Med_suction + suction_bound)) //reactivate the pump if pressure is below the lower boundary
                 sensor.pressure_inrange = 0;
         }
 
         if (Suction.level == 3)
         {
-            if ((sensor.pressure > High_suction) && (sensor.pressure_inrange == 0))
-                Suction.duty = 100;
+            if ((sensor.pressure > High_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
+                Suction.duty = 100;                                                 //use 100% duty for pump power
             else
             {
-                Suction.duty = 0;
+                Suction.duty = 0; //stop the pump if pressure exceed the level
                 sensor.pressure_inrange = 1;
             }
 
             if ((sensor.pressure) > (High_suction + suction_bound))
-                sensor.pressure_inrange = 0;
+                sensor.pressure_inrange = 0; //reactivate the pump if pressure is below the lower boundary
         }
     }
     else
     {
-        IO_Pump = 0;
+        IO_Pump = 0; //when pump is off, turn off Heating and vibration as well
         Suction.level = 0;
-        Heating.level=0;
-        Vibration.level=0;
+        Heating.level = 0;
+        Vibration.level = 0;
     }
 }
 
@@ -117,7 +117,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
     Time.update = 0;
     Time.count++;
 
-    if ((Time.count % 9) == 0)
+    if ((Time.count % 9) == 0) //take sensor reading every half second
         Time.reading = 1;
 
     if (Time.count > 19)
@@ -136,21 +136,21 @@ void Time_handler(void) //Timer 0 is 50ms period,
     {
         Time.min = 0;
     }
-    if ((Power.level == 3) && (Time.min >= Time3))
+    if ((Power.level == 3) && (Time.min >= Time3)) //update timer counter if time drop to Time2
     {
         Power.level = 2;
 
         Time.min = 0;
-        Display_handler();
+        Display_handler(); //refresh display
     }
-    if ((Power.level == 2) && (Time.min >= Time2))
+    if ((Power.level == 2) && (Time.min >= Time2)) //update timer counter if time drop to Time1
     {
         Power.level = 1;
 
         Time.min = 0;
-        Display_handler();
+        Display_handler(); //refresh display
     }
-    if ((Power.level == 1) && (Time.min >= Time1))
+    if ((Power.level == 1) && (Time.min >= Time1)) //update timer counter if time drop to 0
     {
         Power.level = 0;
         state = Power_down;
@@ -158,49 +158,41 @@ void Time_handler(void) //Timer 0 is 50ms period,
         Time.min = 0;
     }
 
+    if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
+    {
+        //if one of the key is pressed
 
-
-   
-
-        if ((!INT0) || (!INT1) || (!INT2) || (!INT3)) //if one of the key is release timer is reset
+        if (Key.debounce > 30) //key hold for 2 sec
         {
-            //if key is pressed and debounce time >3 s, keyupdate will be enable
 
-            if (Key.debounce > 30) 
-            {
-
-            
-                
-                Key.update = 1;
-                Key.long_press_state = 1;
-                Key.debounce = 50;
-            }
+            Key.update = 1;           //flag to activate key handler
+            Key.long_press_state = 1; //key hold over 2 sec flag activated
+            Key.debounce = 30;        //hold debounce time so it will wait key.pressed==0 then refresh the debounced value
         }
+    }
 
+    else
+    { // key is release. now check the press time in valid range, the keyupdate will be enable
+
+        if ((Key.debounce > 4) && (Key.debounce < 30))
+            Key.update = 1;
         else
-        { // key is release. now check the press time in valid range, the keyupdate will be enable
+            Key.update = 0;
 
-            if ((Key.debounce > 4) && (Key.debounce < 30))
-                Key.update = 1;
-            else
-                Key.update = 0;
-
-            Key.pressed=0;          
-            
-            Key.debounce = 0;
-            Key.long_press_state = 0;
-        }
-    
+        Key.pressed = 0; //if no key is pressed , key press is cleared
+        Key.debounce = 0;
+        Key.long_press_state = 0; //if no key is pressed, long press state=0;
+    }
 }
 
 void key_up(Level *this_key)
 {
 
-    this_key->level++;
+    this_key->level++;//loop the key level for 0->1->2->3 and back to 0
     if (this_key->level > (Max_key - 1))
         this_key->level = 0;
     if (this_key->level == 0)
-        this_key->on = 0;
+        this_key->on = 0;           //if the level is not = 0, assume the function for this key is power on stage
     else
         this_key->on = 1;
 }
@@ -209,7 +201,7 @@ void Key_handler(void)
 
 {
 
-    Timer_Reset();
+  //  Timer_Reset();
 
     if (Key.long_press_state)
     {
@@ -254,7 +246,7 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-  
+
             key_up(&Suction);
 
             break;
@@ -263,8 +255,7 @@ void Key_handler(void)
             key_up(&Power);
 
             break;
-            // -------------------------------
-            // Default event handler.
+        
         default:
             break;
         }
@@ -276,7 +267,9 @@ void Key_handler(void)
 void IO_handler(void)
 {
 
-    service();
+    service();              //update key status
+
+    //update key status
 
     if (Power.on)
     {
