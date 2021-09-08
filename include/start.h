@@ -38,12 +38,12 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define Med_suction   0x38
 #define High_suction  0x18
 
-#define suction_bound 0x08
+#define suction_bound 0x10
 #define suction_release 0x78
 
-#define Hz_50  5    //5 for 10ms which is half period of 50 Hz
-#define Hz_30  8     //8  for 16ms which is half period of 30Hz
-#define Hz_20  13    //13 for 26 ms which is half period of 20Hz
+#define Hz_50  32    //5 for 10ms which is half period of 50 Hz
+#define Hz_30  52     //8  for 16ms which is half period of 30Hz
+#define Hz_20  80    //13 for 25 ms which is half period of 20Hz
 
 //Sensor_init
 typedef struct HTI_sensor

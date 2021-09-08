@@ -28,11 +28,11 @@ void service(void)
     if (Vibration.on)
     {
         if (Vibration.level == 1)
-            Time.Hzmax=Hz_20;
+            Time.Hzmax = Hz_50;
         if (Vibration.level == 2)
-            Time.Hzmax=Hz_30;
+            Time.Hzmax = Hz_30;
         if (Vibration.level == 3)
-            Time.Hzmax=Hz_50;
+            Time.Hzmax = Hz_20;
 
         IO_Vibration = Time.Hzout;
     }
@@ -43,13 +43,14 @@ void service(void)
         Vibration.level = 0;
     }
 
-    if (Suction.level==0)
-        {
-                if (sensor.pressure<suction_release)
-                    IO_Valve=0;
-                    else IO_Valve=1;
-
-        }
+    if (Suction.level == 0)
+    {
+        if (sensor.pressure < suction_release)
+            IO_Valve = 0;
+        else
+            IO_Valve = 1;
+        IO_Pump = 0;
+    }
 
     if (Suction.on)
     {
@@ -57,7 +58,7 @@ void service(void)
         if (Suction.level == 1)
         {
             if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0))
-                Suction.duty = 30;
+                Suction.duty = 100;
             else
             {
                 Suction.duty = 0;
@@ -70,7 +71,7 @@ void service(void)
         if (Suction.level == 2)
         {
             if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0))
-                Suction.duty = 60;
+                Suction.duty = 100;
             else
             {
                 Suction.duty = 0;
@@ -109,13 +110,13 @@ void Time_handler(void) //Timer 0 is 50ms period,
     Time.update = 0;
     Time.count++;
 
-
-    if ((Time.count%9)==0) Time.reading=1;
+    if ((Time.count % 9) == 0)
+        Time.reading = 1;
 
     if (Time.count > 19)
     {
         Time.sec++;
-        
+
         Time.count = 0;
     }
     if (Time.sec > 59)
@@ -265,8 +266,6 @@ void Key_handler(void)
         default:
             break;
         }
-
-
 }
 
 void IO_handler(void)
