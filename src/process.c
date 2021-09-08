@@ -28,13 +28,13 @@ void service(void)
     if (Vibration.on)
     {
         if (Vibration.level == 1)
-            Vibration.duty = 40;
+            Time.Hzmax=Hz_20;
         if (Vibration.level == 2)
-            Vibration.duty = 60;
+            Time.Hzmax=Hz_30;
         if (Vibration.level == 3)
-            Vibration.duty = 100;
+            Time.Hzmax=Hz_50;
 
-        IO_Vibration = Vibration.output;
+        IO_Vibration = Time.Hzout;
     }
 
     else

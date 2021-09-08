@@ -35,12 +35,15 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define Max_key 4
 
 #define Low_suction   0x58
-#define Med_suction   0x48
-#define High_suction  0x38
+#define Med_suction   0x38
+#define High_suction  0x18
 
 #define suction_bound 0x08
 #define suction_release 0x78
 
+#define Hz_50  5    //5 for 10ms which is half period of 50 Hz
+#define Hz_30  8     //8  for 16ms which is half period of 30Hz
+#define Hz_20  13    //13 for 26 ms which is half period of 20Hz
 
 //Sensor_init
 typedef struct HTI_sensor
@@ -98,9 +101,9 @@ typedef enum Button_type
 typedef enum Treatment_time
 {
     Time0 = 0,
-    Time1 = 1,
-    Time2 = 1,
-    Time3 = 1
+    Time1 = 5,
+    Time2 = 5,
+    Time3 = 5
 
 } Treatment_time;
 
@@ -115,10 +118,13 @@ typedef struct Timer_Setting
     unsigned char sec;
     unsigned char min;
     unsigned char count;
+    unsigned char Hzcount;
+    unsigned char Hzmax;
     unsigned char update : 1;
     unsigned char PWM : 1;
     unsigned char reading:1;
-    unsigned char onesec:1;
+    unsigned char Hzout:1;
+  
 
 } Timer_Status;
 

@@ -80,6 +80,12 @@ void Start(void)
   
          if (Time.PWM==1)
         {
+            Time.Hzcount++;
+            if (Time.Hzcount<Time.Hzmax) 
+                Time.Hzout=1;
+                else Time.Hzout=0;
+            if (Time.Hzcount>=(Time.Hzmax<<1)) Time.Hzcount=0;   
+
             check_pwm(&Vibration);   
              check_pwm(&Heating);
              check_pwm(&Suction);
