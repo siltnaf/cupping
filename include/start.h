@@ -34,9 +34,15 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 
 #define Max_key 4
 
+#define Valve_open        IO_Valve = 0
+#define Valve_close       IO_Valve = 1
+
+
+#define Stay_suction  0x78
 #define Low_suction   0x58
 #define Med_suction   0x38
 #define High_suction  0x18
+
 
 #define suction_bound 0x10
 #define suction_release 0x78
@@ -101,9 +107,9 @@ typedef enum Button_type
 typedef enum Treatment_time
 {
     Time0 = 0,
-    Time1 = 5,
-    Time2 = 5,
-    Time3 = 5
+    Time1 = 1,
+    Time2 = 1,
+    Time3 = 1
 
 } Treatment_time;
 
@@ -124,6 +130,7 @@ typedef struct Timer_Setting
     unsigned char PWM : 1;
     unsigned char reading:1;
     unsigned char Hzout:1;
+    unsigned char blink:1;
   
 
 } Timer_Status;

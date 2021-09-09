@@ -102,6 +102,7 @@ void Start(void)
         }
         if (Time.reading==1)
             {
+                Time.blink=!Time.blink;
             sensor.pressure=HX711_Read(hxsensor->P64)>>16;
             Time.reading=0;
             }

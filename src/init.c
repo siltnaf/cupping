@@ -22,6 +22,7 @@ void ParameterReset(void)
     Suction.level = 0;
     Heating.level = 0;
     Vibration.level = 0;
+    Power.level=0;
 
     Suction.timer = 0;
     Vibration.timer = 0;

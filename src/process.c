@@ -46,9 +46,11 @@ void service(void) //background service running all the time
     if (Suction.level == 0) // if suction is off , release the pressure through valve
     {
         if (sensor.pressure < suction_release)
-            IO_Valve = 0;
+            Valve_open;
         else
-            IO_Valve = 1;
+            Valve_close;
+            Heating.on=0;
+            Vibration.on=0;
         IO_Pump = 0;
     }
 
@@ -56,7 +58,9 @@ void service(void) //background service running all the time
     {
         IO_Pump = Suction.output;
         if (Suction.level == 1)
-        {
+        {       
+            if (sensor.pressure<(Low_suction-suction_bound)) Valve_open; else Valve_close;
+
             if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
                 Suction.duty = 100;                                                //use 100% duty for pump power
             else
@@ -70,6 +74,8 @@ void service(void) //background service running all the time
         }
         if (Suction.level == 2)
         {
+            if (sensor.pressure<(Med_suction-suction_bound)) Valve_open; else Valve_close;
+            
             if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
                 Suction.duty = 100;                                                //use 100% duty for pump power
             else
@@ -84,6 +90,7 @@ void service(void) //background service running all the time
 
         if (Suction.level == 3)
         {
+   
             if ((sensor.pressure > High_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
                 Suction.duty = 100;                                                 //use 100% duty for pump power
             else
@@ -152,8 +159,8 @@ void Time_handler(void) //Timer 0 is 50ms period,
     }
     if ((Power.level == 1) && (Time.min >= Time1)) //update timer counter if time drop to 0
     {
-        Power.level = 0;
-        state = Power_down;
+
+        state = Timer_mode;
         Display_handler();
         Time.min = 0;
     }
@@ -246,7 +253,10 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-
+            if (state==Timer_mode) 
+                {Suction.on=0;
+                Suction.level=0;}
+            else
             key_up(&Suction);
 
             break;
@@ -311,7 +321,10 @@ void Display_handler(void)
     u8 display_val = 0;
 
     display_val = (level_val[Vibration.level]) & 0b0000111;
+    
     display_val |= (level_val[Suction.level] << 3) & 0b0111000;
+         
+
 
     LED1 = display_val;
 
