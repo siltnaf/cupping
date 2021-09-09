@@ -70,7 +70,7 @@ void DeviceInit(void)
 
     Key.debounce = 0;
     Key.update = 0;
-    state = idle_mode;
+    state = Idle_mode;
 
 #if (Seril_Debug == 0)
     Timer2_init(); //use timer2 for PWM if UART is not use for debug

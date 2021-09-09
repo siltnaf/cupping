@@ -6,8 +6,8 @@
 //State machine
 typedef enum State_name
 {
-    idle_mode,
-    breathe_mode,
+    Idle_mode,
+    Breathe_mode,
     Timer_end,
     Power_down,
     BT_mode

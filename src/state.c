@@ -8,12 +8,12 @@ void state_machine(void)
 
     switch (state)
     {
-    case idle_mode:
-        state = idle_mode;
+    case Idle_mode:
+        state = Idle_mode;
         break;
 
-    case breathe_mode:
-        state = breathe_mode;
+    case Breathe_mode:
+        state = Breathe_mode;
         break;
 
     case Timer_end:
@@ -90,7 +90,7 @@ void state_machine(void)
         Power.on = 1;
         Power.level = 1;
 
-        state = idle_mode;
+        state = Idle_mode;
         break;
 
     default:
