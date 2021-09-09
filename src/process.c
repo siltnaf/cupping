@@ -49,8 +49,8 @@ void service(void) //background service running all the time
             Valve_open;
         else
             Valve_close;
-            Heating.on=0;
-            Vibration.on=0;
+        Heating.on = 0;
+        Vibration.on = 0;
         IO_Pump = 0;
     }
 
@@ -58,8 +58,11 @@ void service(void) //background service running all the time
     {
         IO_Pump = Suction.output;
         if (Suction.level == 1)
-        {       
-            if (sensor.pressure<(Low_suction-suction_bound)) Valve_open; else Valve_close;
+        {
+            if (sensor.pressure < (Low_suction - suction_bound))
+                Valve_open;
+            else
+                Valve_close;
 
             if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
                 Suction.duty = 100;                                                //use 100% duty for pump power
@@ -74,8 +77,11 @@ void service(void) //background service running all the time
         }
         if (Suction.level == 2)
         {
-            if (sensor.pressure<(Med_suction-suction_bound)) Valve_open; else Valve_close;
-            
+            if (sensor.pressure < (Med_suction - suction_bound))
+                Valve_open;
+            else
+                Valve_close;
+
             if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
                 Suction.duty = 100;                                                //use 100% duty for pump power
             else
@@ -90,7 +96,7 @@ void service(void) //background service running all the time
 
         if (Suction.level == 3)
         {
-   
+
             if ((sensor.pressure > High_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
                 Suction.duty = 100;                                                 //use 100% duty for pump power
             else
@@ -195,11 +201,11 @@ void Time_handler(void) //Timer 0 is 50ms period,
 void key_up(Level *this_key)
 {
 
-    this_key->level++;//loop the key level for 0->1->2->3 and back to 0
+    this_key->level++; //loop the key level for 0->1->2->3 and back to 0
     if (this_key->level > (Max_key - 1))
         this_key->level = 0;
     if (this_key->level == 0)
-        this_key->on = 0;           //if the level is not = 0, assume the function for this key is power on stage
+        this_key->on = 0; //if the level is not = 0, assume the function for this key is power on stage
     else
         this_key->on = 1;
 }
@@ -208,7 +214,7 @@ void Key_handler(void)
 
 {
 
-  //  Timer_Reset();
+    //  Timer_Reset();
 
     if (Key.long_press_state)
     {
@@ -228,11 +234,14 @@ void Key_handler(void)
         case Key_Pump:
 
             Suction.on = 0;
+            Suction.level = 0;
 
             break;
         case Key_Power:
 
             Power.on = 0;
+            Power.level=0;
+          //  state = Timer_mode;
 
             break;
         }
@@ -253,19 +262,26 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-            if (state==Timer_mode) 
-                {Suction.on=0;
-                Suction.level=0;}
+            if (state == Timer_mode)
+            {
+                Suction.on = 0;
+                Suction.level = 0;
+            }
             else
-            key_up(&Suction);
+                key_up(&Suction);
 
             break;
         case Key_Power:
 
             key_up(&Power);
+            if (Power.on == 0)
+            {
+                state = Timer_mode;
+                Power.level = 0;
+            }
 
             break;
-        
+
         default:
             break;
         }
@@ -277,7 +293,7 @@ void Key_handler(void)
 void IO_handler(void)
 {
 
-    service();              //update key status
+    service(); //update key status
 
     //update key status
 
@@ -311,7 +327,7 @@ void IO_handler(void)
     else
     {
 
-        state = Power_down;
+        state = Timer_mode;
     }
 }
 
@@ -321,10 +337,8 @@ void Display_handler(void)
     u8 display_val = 0;
 
     display_val = (level_val[Vibration.level]) & 0b0000111;
-    
-    display_val |= (level_val[Suction.level] << 3) & 0b0111000;
-         
 
+    display_val |= (level_val[Suction.level] << 3) & 0b0111000;
 
     LED1 = display_val;
 

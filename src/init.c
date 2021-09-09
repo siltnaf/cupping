@@ -66,6 +66,8 @@ void DeviceInit(void)
     Int3_init();
     Timer0_init();
 
+    sensor.pressure=0xff;
+
     Key.debounce = 0;
     Key.update = 0;
     state = idle_mode;

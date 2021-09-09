@@ -36,16 +36,25 @@ void state_machine(void)
 
 
 
-        if (Suction.level == 0) // if suction is off , release the pressure through valve
+        if ((Suction.level == 0)) // if suction is off , release the pressure through valve
         {
-            IO_Power=0;
-            if (sensor.pressure < suction_release)
+            IO_Power=1;
+            LED1=0;
+            LED2=0;
+             
+                display(LED1, GIRD1);
+                display(LED2, GIRD2);   
+
+             if (sensor.pressure < suction_release)
                 Valve_open;
             else
             {
-                Valve_close;
+                Valve_close; 
+
+              IO_Power=0;   
                 state = Power_down;
             }
+            
         }
         else {
 
@@ -66,6 +75,8 @@ void state_machine(void)
     case Power_down:
 
         DeviceInit();
+
+      
 
         Key.update = 0;
         Key.pressed = 0;
@@ -105,11 +116,6 @@ void state_machine(void)
         state = idle_mode;
         break;
 
-    case Power_on:
-        IO_Power = 1;
-
-        state = idle_mode;
-        break;
 
     default:
         break;
