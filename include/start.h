@@ -107,9 +107,9 @@ typedef enum Button_type
 typedef enum Treatment_time
 {
     Time0 = 0,
-    Time1 = 1,
-    Time2 = 1,
-    Time3 = 1
+    Time1 = 5,
+    Time2 = 5,
+    Time3 = 5
 
 } Treatment_time;
 
