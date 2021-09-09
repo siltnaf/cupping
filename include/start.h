@@ -44,7 +44,8 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define High_suction  0x18
 
 
-#define suction_bound 0x10
+#define lower_bound 0x10
+#define upper_bound 0x08
 #define suction_release 0x8a
 
 #define Hz_50  32    //5 for 10ms which is half period of 50 Hz

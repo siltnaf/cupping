@@ -7,11 +7,10 @@
 typedef enum State_name
 {
     idle_mode,
-    normal_mode,
-    Timer_mode,
+    breathe_mode,
+    Timer_end,
     Power_down,
-    Power_on,
-    BT_mode,
+    BT_mode
 
 } State_name;
 

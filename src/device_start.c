@@ -4,7 +4,7 @@
 Button_type Key_pressed;
 Button_Status Key; //初始化按键
 Level Power, Vibration, Suction, Heating;
- 
+
 Timer_Status Time;
 Treatment_time duration;
 
@@ -12,30 +12,25 @@ channel hx711channel, *hxsensor;
 AD_sensor sensor;
 unsigned long sensor_reading;
 
-
 void check_pwm(Level *this_pwm)
 {
-this_pwm->timer++;
+    this_pwm->timer++;
 
-if (this_pwm->timer < this_pwm->duty) //高电平时间
+    if (this_pwm->timer < this_pwm->duty) //高电平时间
         this_pwm->output = 1;
     else
     {
         this_pwm->output = 0; /* 低电平时间code */
     }
     if (this_pwm->timer >= 100) //pwm占空比设定为100%
-        {
- this_pwm->timer = 0;
-this_pwm->output=0; 
-        }
-       
-if (this_pwm->duty==100) this_pwm->output=1;
+    {
+        this_pwm->timer = 0;
+        this_pwm->output = 0;
+    }
 
-
-
+    if (this_pwm->duty == 100)
+        this_pwm->output = 1;
 }
-
-
 
 void Start(void)
 {
@@ -54,70 +49,54 @@ void Start(void)
     Send1_String("STC15W204S\r\nUart is ok !\r\n");      //发送字符串检测是否初始化成功
     Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n"); //发送字符串检测是否初始化成功
 #endif
-    
-     
-         
-    
-    
-    
-    
-    
+
     Key.update = 0;
     Key.long_press_state = 0;
-    
-    state=Power_down;
-   
-
+    state = Power_down;
 
     while (1)
     {
-      
+
         EA = 1;
         TR0 = 1;
         ET0 = 1;
-        
 
         service();
-  
-         if (Time.PWM==1)
+
+        if (Time.PWM == 1)
         {
             Time.Hzcount++;
-            if (Time.Hzcount<Time.Hzmax) 
-                Time.Hzout=1;
-                else Time.Hzout=0;
-            if (Time.Hzcount>=(Time.Hzmax<<1)) Time.Hzcount=0;   
-
-            check_pwm(&Vibration);   
-             check_pwm(&Heating);
-             check_pwm(&Suction);
-          
-           
-            Time.PWM=0;
-        } 
+            if (Time.Hzcount < Time.Hzmax)
+                Time.Hzout = 1;
+            else
+                Time.Hzout = 0;
+            if (Time.Hzcount >= (Time.Hzmax << 1))
+                Time.Hzcount = 0;
+            check_pwm(&Vibration);
+            check_pwm(&Heating);
+            check_pwm(&Suction);
+            Time.PWM = 0;
+        }
 
         if (Time.update)
         {
-              Time_handler();
-   
+            Time_handler();
         }
-        if (Time.reading==1)
-            {
-                Time.blink=!Time.blink;
-            sensor.pressure=HX711_Read(hxsensor->P64)>>16;
-            Time.reading=0;
-            }
-      
-        if (Key.update  ||Key.long_press_state) //按键中断flag;
+        if (Time.reading == 1)
+        {
+            Time.blink = !Time.blink;
+            sensor.pressure = HX711_Read(hxsensor->P64) >> 16;
+            Time.reading = 0;
+        }
+
+        if (Key.update || Key.long_press_state) //按键中断flag;
         {
             EA = 0;
             Key.which_press = Key_pressed;
 
             Key_handler();
             IO_handler();
-
             Display_handler();
-
-         
         }
 
         state_machine();

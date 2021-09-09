@@ -3,6 +3,30 @@
 
 unsigned char LED1, LED2;
 
+void Lock_pressure(unsigned char keep_pressure)
+{
+
+
+if (sensor.pressure < (keep_pressure - upper_bound))
+                Valve_open;
+            else
+                Valve_close;
+
+            if ((sensor.pressure > keep_pressure) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
+                Suction.duty = 100;                                                //use 100% duty for pump power
+            else
+            {
+                Suction.duty = 0; //stop the pump if pressure exceed the level
+                sensor.pressure_inrange = 1;
+            }
+             if ((sensor.pressure) > (keep_pressure + lower_bound)) //reactivate the pump if pressure is below the lower boundary
+                sensor.pressure_inrange = 0;
+
+
+}
+
+
+
 void service(void) //background service running all the time
 
 {
@@ -57,57 +81,9 @@ void service(void) //background service running all the time
     if (Suction.on)
     {
         IO_Pump = Suction.output;
-        if (Suction.level == 1)
-        {
-            if (sensor.pressure < (Low_suction - suction_bound))
-                Valve_open;
-            else
-                Valve_close;
-
-            if ((sensor.pressure > Low_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
-                Suction.duty = 100;                                                //use 100% duty for pump power
-            else
-            {
-                Suction.duty = 0; //stop the pump if pressure exceed the level
-                sensor.pressure_inrange = 1;
-            }
-
-            if ((sensor.pressure) > (Low_suction + suction_bound)) //reactivate the pump if pressure is below the lower boundary
-                sensor.pressure_inrange = 0;
-        }
-        if (Suction.level == 2)
-        {
-            if (sensor.pressure < (Med_suction - suction_bound))
-                Valve_open;
-            else
-                Valve_close;
-
-            if ((sensor.pressure > Med_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
-                Suction.duty = 100;                                                //use 100% duty for pump power
-            else
-            {
-                Suction.duty = 0; //stop the pump if pressure exceed the level
-                sensor.pressure_inrange = 1;
-            }
-
-            if ((sensor.pressure) > (Med_suction + suction_bound)) //reactivate the pump if pressure is below the lower boundary
-                sensor.pressure_inrange = 0;
-        }
-
-        if (Suction.level == 3)
-        {
-
-            if ((sensor.pressure > High_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
-                Suction.duty = 100;                                                 //use 100% duty for pump power
-            else
-            {
-                Suction.duty = 0; //stop the pump if pressure exceed the level
-                sensor.pressure_inrange = 1;
-            }
-
-            if ((sensor.pressure) > (High_suction + suction_bound))
-                sensor.pressure_inrange = 0; //reactivate the pump if pressure is below the lower boundary
-        }
+        if (Suction.level == 1) Lock_pressure(Low_suction);
+        if (Suction.level == 2) Lock_pressure(Med_suction);
+        if (Suction.level == 3) Lock_pressure(High_suction);
     }
     else
     {
@@ -136,13 +112,11 @@ void Time_handler(void) //Timer 0 is 50ms period,
     if (Time.count > 19)
     {
         Time.sec++;
-
         Time.count = 0;
     }
     if (Time.sec > 59)
     {
         Time.sec = 0;
-
         Time.min++;
     }
     if (Time.min > 59)
@@ -152,21 +126,18 @@ void Time_handler(void) //Timer 0 is 50ms period,
     if ((Power.level == 3) && (Time.min >= Time3)) //update timer counter if time drop to Time2
     {
         Power.level = 2;
-
         Time.min = 0;
         Display_handler(); //refresh display
     }
     if ((Power.level == 2) && (Time.min >= Time2)) //update timer counter if time drop to Time1
     {
         Power.level = 1;
-
         Time.min = 0;
         Display_handler(); //refresh display
     }
     if ((Power.level == 1) && (Time.min >= Time1)) //update timer counter if time drop to 0
     {
-
-        state = Timer_mode;
+        state = Timer_end;
         Display_handler();
         Time.min = 0;
     }
@@ -241,7 +212,7 @@ void Key_handler(void)
 
             Power.on = 0;
             Power.level=0;
-          //  state = Timer_mode;
+     
 
             break;
         }
@@ -262,7 +233,7 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-            if (state == Timer_mode)
+            if (state == Timer_end)
             {
                 Suction.on = 0;
                 Suction.level = 0;
@@ -276,7 +247,7 @@ void Key_handler(void)
             key_up(&Power);
             if (Power.on == 0)
             {
-                state = Timer_mode;
+                state = Timer_end;
                 Power.level = 0;
             }
 
@@ -327,7 +298,7 @@ void IO_handler(void)
     else
     {
 
-        state = Timer_mode;
+        state = Timer_end;
     }
 }
 

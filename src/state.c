@@ -9,74 +9,51 @@ void state_machine(void)
     switch (state)
     {
     case idle_mode:
-
         state = idle_mode;
         break;
 
-    case normal_mode:
-        state = normal_mode;
+    case breathe_mode:
+        state = breathe_mode;
         break;
 
-    case Timer_mode:
-        Heating.on=0;
-        Vibration.on=0;
-
-        if ((sensor.pressure > Stay_suction) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
-            Suction.duty = 30;                                                  //use 100% duty for pump power
-        else
-        {
-            Suction.duty = 0; //stop the pump if pressure exceed the level
-
-            sensor.pressure_inrange = 1;
-        }
-
-        if ((sensor.pressure) > (Stay_suction + suction_bound)) //reactivate the pump if pressure is below the lower boundary
-            sensor.pressure_inrange = 0;
-
-
-
-
+    case Timer_end:
+        Heating.on = 0;
+        Vibration.on = 0;
+        Lock_pressure(Stay_suction);
         if ((Suction.level == 0)) // if suction is off , release the pressure through valve
         {
-            IO_Power=1;
-            LED1=0;
-            LED2=0;
-             
-                display(LED1, GIRD1);
-                display(LED2, GIRD2);   
-
-             if (sensor.pressure < suction_release)
+            IO_Power = 1;
+            LED1 = 0;
+            LED2 = 0;
+            display(LED1, GIRD1);
+            display(LED2, GIRD2);
+            if (sensor.pressure < suction_release)
                 Valve_open;
             else
             {
-                Valve_close; 
-
-              IO_Power=0;   
+                Valve_close;
+                IO_Power = 0;
                 state = Power_down;
             }
-            
         }
-        else {
+        else
+        {
 
-                if (Time.blink==1)
-                    LED1 |= 0b0001000;
-                else 
-                    LED1 &= 0b0000000;
-                LED2=0b00000000;    
+            if (Time.blink == 1)
+                LED1 |= 0b0001000;
+            else
+                LED1 &= 0b0000000;
+            LED2 = 0b00000000;
+            display(LED1, GIRD1);
+            display(LED2, GIRD2);
 
-                display(LED1, GIRD1);
-                display(LED2, GIRD2);
-              
-      
-        }                     //blind LED
+        } //blind LED
 
         break;
 
     case Power_down:
 
         DeviceInit();
-
-      
 
         Key.update = 0;
         Key.pressed = 0;
@@ -115,7 +92,6 @@ void state_machine(void)
 
         state = idle_mode;
         break;
-
 
     default:
         break;
