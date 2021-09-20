@@ -28,6 +28,41 @@ void delay(void)					//几us的延时
 
 }
 
+
+void read_sensor(void)
+
+
+{
+	
+
+
+      /*   switch (Time.count % 20)
+        {
+        case 0:
+            sensor.data = HX711_Read(hxsensor->P64);            //dummy reading
+            break;
+        case 4:
+            sensor.data = HX711_Read(hxsensor->P64);
+            sensor.pressure = sensor.data >> 16;
+            break;
+        case 8:
+            sensor.data = HX711_Read(hxsensor->T32);            //dummy reading
+            break;
+        case 12:
+           
+            break;
+        default:
+            break;
+        }
+
+ */
+
+
+
+
+}
+
+
 void gn1616_ms(u16 ms)		//大约ms级的延时
 {
 	u16 i,j;

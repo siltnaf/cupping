@@ -6,26 +6,22 @@ unsigned char LED1, LED2;
 void Lock_pressure(unsigned char keep_pressure)
 {
 
+   /*  if (sensor.pressure < (keep_pressure - upper_bound))
+        Valve_open;
+    else
+        Valve_close; */
 
-if (sensor.pressure < (keep_pressure - upper_bound))
-                Valve_open;
-            else
-                Valve_close;
-
-            if ((sensor.pressure > keep_pressure) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
-                Suction.duty = 100;                                                //use 100% duty for pump power
-            else
-            {
-                Suction.duty = 0; //stop the pump if pressure exceed the level
-                sensor.pressure_inrange = 1;
-            }
-             if ((sensor.pressure) > (keep_pressure + lower_bound)) //reactivate the pump if pressure is below the lower boundary
-                sensor.pressure_inrange = 0;
-
-
+    if ((sensor.pressure > keep_pressure) && (sensor.pressure_inrange == 0)) //activate the pump if pressure is below the level
+        Suction.duty = 100;                                                  //use 100% duty for pump power
+    else
+    {
+        Suction.duty = 0; //stop the pump if pressure exceed the level
+        sensor.pressure_inrange = 1;
+        Time.error=0;
+    }
+    if ((sensor.pressure) > (keep_pressure + lower_bound)) //reactivate the pump if pressure is below the lower boundary
+        sensor.pressure_inrange = 0;
 }
-
-
 
 void service(void) //background service running all the time
 
@@ -34,11 +30,22 @@ void service(void) //background service running all the time
     if (Heating.on)
     {
         if (Heating.level == 1) //set duty for heating PTC power
-            Heating.duty = 50;
+             if (sensor.temperature < Low_heat)
+                Heating.duty = 20;
+            else
+                Heating.duty = 100;
+
         if (Heating.level == 2)
-            Heating.duty = 60;
+             if (sensor.temperature < Med_heat)
+                Heating.duty = 20;
+            else 
+                Heating.duty = 100;
+
         if (Heating.level == 3)
-            Heating.duty = 70;
+             if (sensor.temperature < High_heat)
+                Heating.duty = 20;
+            else 
+                Heating.duty = 100;
 
         IO_PTC = Heating.output;
     }
@@ -67,12 +74,11 @@ void service(void) //background service running all the time
         Vibration.level = 0;
     }
 
-    if (Suction.level == 0) // if suction is off , release the pressure through valve
+    if (Suction.level == 0)  // if suction is off , release the pressure through valve
     {
-        if (sensor.pressure < suction_release)
-            Valve_open;
-        else
-            Valve_close;
+
+     
+
         Heating.on = 0;
         Vibration.on = 0;
         IO_Pump = 0;
@@ -81,9 +87,12 @@ void service(void) //background service running all the time
     if (Suction.on)
     {
         IO_Pump = Suction.output;
-        if (Suction.level == 1) Lock_pressure(Low_suction);
-        if (Suction.level == 2) Lock_pressure(Med_suction);
-        if (Suction.level == 3) Lock_pressure(High_suction);
+        if (Suction.level == 1)
+            Lock_pressure(Low_suction);
+        if (Suction.level == 2)
+            Lock_pressure(Med_suction);
+        if (Suction.level == 3)
+            Lock_pressure(High_suction);
     }
     else
     {
@@ -91,6 +100,7 @@ void service(void) //background service running all the time
         Suction.level = 0;
         Heating.level = 0;
         Vibration.level = 0;
+        Valve_close;
     }
 }
 
@@ -106,14 +116,35 @@ void Time_handler(void) //Timer 0 is 50ms period,
     Time.update = 0;
     Time.count++;
 
-    if ((Time.count % 9) == 0) //take sensor reading every half second
-        Time.reading = 1;
+    if (Time.count < 10)
+        Time.blink = 1;
+    else
+        Time.blink = 0;
 
     if (Time.count > 19)
     {
         Time.sec++;
         Time.count = 0;
     }
+
+    if ((Time.sec % 4 == 0) && (Time.count == 10))
+        HX711_Read(hxsensor->P64);
+
+    if ((Time.sec % 4 == 1) && (Time.count == 10))
+        sensor.pressure = HX711_Read(hxsensor->P64) >> 16;
+
+    if ((Time.sec % 4 == 2) && (Time.count == 10))
+        HX711_Read(hxsensor->T32);
+
+    if ((Time.sec % 4 == 3) && (Time.count == 10))
+
+    {
+        sensor.data = HX711_Read(hxsensor->T32)&0x000fffff-0x00080000;
+        sensor.temperature = (sensor.data >> 11);
+
+        
+    }
+
     if (Time.sec > 59)
     {
         Time.sec = 0;
@@ -211,8 +242,7 @@ void Key_handler(void)
         case Key_Power:
 
             Power.on = 0;
-            Power.level=0;
-     
+            Power.level = 0;
 
             break;
         }
@@ -267,6 +297,18 @@ void IO_handler(void)
     service(); //update key status
 
     //update key status
+
+
+    if (Suction.level == 0)  // if suction is off , release the pressure through valve
+    {
+
+        Valve_open;
+        delay_ms(30000);
+        delay_ms(30000);
+        delay_ms(30000);
+        Valve_close;
+    }
+
 
     if (Power.on)
     {

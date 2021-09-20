@@ -48,7 +48,7 @@ void DeviceInit(void)
     P2M1 = 0;
     P2M0 = 0; //设置为准双向口
     P3M1 = 0;
-    P3M0 = 0x03; //设置为准双向口
+    P3M0 = 0x00; //设置为准双向口
     P4M1 = 0;
     P4M0 = 0; //设置为准双向口
     P5M1 = 0;
@@ -70,6 +70,7 @@ void DeviceInit(void)
 
     Key.debounce = 0;
     Key.update = 0;
+    Time.error=1;
     state = Idle_mode;
 
 #if (Seril_Debug == 0)

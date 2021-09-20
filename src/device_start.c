@@ -56,14 +56,16 @@ void Start(void)
 
     while (1)
     {
+      
+
 
         EA = 1;
         TR0 = 1;
         ET0 = 1;
 
-        service();
+       service();
 
-        if (Time.PWM == 1)
+       if (Time.PWM == 1)
         {
             Time.Hzcount++;
             if (Time.Hzcount < Time.Hzmax)
@@ -81,13 +83,12 @@ void Start(void)
         if (Time.update)
         {
             Time_handler();
+            
+           
         }
-        if (Time.reading == 1)
-        {
-            Time.blink = !Time.blink;
-            sensor.pressure = HX711_Read(hxsensor->P64) >> 16;
-            Time.reading = 0;
-        }
+
+     
+       
 
         if (Key.update || Key.long_press_state) //按键中断flag;
         {
@@ -98,7 +99,7 @@ void Start(void)
             IO_handler();
             Display_handler();
         }
-
+ 
         state_machine();
     }
 
