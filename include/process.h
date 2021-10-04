@@ -7,6 +7,7 @@ void Time_handler(void);
 void Key_handler(void);
 void IO_handler(void);
 void Display_handler(void);
+void Display_ring(void);
 void service(void);
 void Lock_pressure(unsigned char keep_pressure);
 

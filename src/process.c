@@ -6,7 +6,7 @@ unsigned char LED1, LED2;
 void Lock_pressure(unsigned char keep_pressure)
 {
 
-   /*  if (sensor.pressure < (keep_pressure - upper_bound))
+    /*  if (sensor.pressure < (keep_pressure - upper_bound))
         Valve_open;
     else
         Valve_close; */
@@ -17,7 +17,7 @@ void Lock_pressure(unsigned char keep_pressure)
     {
         Suction.duty = 0; //stop the pump if pressure exceed the level
         sensor.pressure_inrange = 1;
-        Time.error=0;
+        Time.error = 0;
     }
     if ((sensor.pressure) > (keep_pressure + lower_bound)) //reactivate the pump if pressure is below the lower boundary
         sensor.pressure_inrange = 0;
@@ -30,21 +30,21 @@ void service(void) //background service running all the time
     if (Heating.on)
     {
         if (Heating.level == 1) //set duty for heating PTC power
-             if (sensor.temperature < Low_heat)
+            if (sensor.temperature < Low_heat)
                 Heating.duty = 20;
             else
                 Heating.duty = 100;
 
         if (Heating.level == 2)
-             if (sensor.temperature < Med_heat)
+            if (sensor.temperature < Med_heat)
                 Heating.duty = 20;
-            else 
+            else
                 Heating.duty = 100;
 
         if (Heating.level == 3)
-             if (sensor.temperature < High_heat)
+            if (sensor.temperature < High_heat)
                 Heating.duty = 20;
-            else 
+            else
                 Heating.duty = 100;
 
         IO_PTC = Heating.output;
@@ -59,11 +59,11 @@ void service(void) //background service running all the time
     if (Vibration.on)
     {
         if (Vibration.level == 1) //use Timer2, create 50 HZ pulse
-            Time.Hzmax = Hz_50;
+            Time.Hzmax = Hz_20;
         if (Vibration.level == 2)
-            Time.Hzmax = Hz_30; //use Timer2, create 30 HZ pulse
+            Time.Hzmax = Hz_50; //use Timer2, create 30 HZ pulse
         if (Vibration.level == 3)
-            Time.Hzmax = Hz_20; //use Timer2, create 20 HZ pulse
+            Time.Hzmax = Hz_max; //use Timer2, create 20 HZ pulse
 
         IO_Vibration = Time.Hzout;
     }
@@ -74,10 +74,8 @@ void service(void) //background service running all the time
         Vibration.level = 0;
     }
 
-    if (Suction.level == 0)  // if suction is off , release the pressure through valve
+    if (Suction.level == 0) // if suction is off , release the pressure through valve
     {
-
-     
 
         Heating.on = 0;
         Vibration.on = 0;
@@ -101,6 +99,18 @@ void service(void) //background service running all the time
         Heating.level = 0;
         Vibration.level = 0;
         Valve_close;
+    }
+
+    if (Time.beep == 1)
+
+    {
+        delay_ms(30000);
+        Time.beep = 0;
+        delay_ms(30000);
+        Time.beep = 1;
+        delay_ms(30000);
+        Time.beep = 0;
+        Timer2_init();
     }
 }
 
@@ -127,7 +137,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
         Time.count = 0;
     }
 
-    if ((Time.sec % 4 == 0) && (Time.count == 10))
+   /*  if ((Time.sec % 4 == 0) && (Time.count == 10))
         HX711_Read(hxsensor->P64);
 
     if ((Time.sec % 4 == 1) && (Time.count == 10))
@@ -139,11 +149,9 @@ void Time_handler(void) //Timer 0 is 50ms period,
     if ((Time.sec % 4 == 3) && (Time.count == 10))
 
     {
-        sensor.data = HX711_Read(hxsensor->T32)&0x000fffff-0x00080000;
+        sensor.data = HX711_Read(hxsensor->T32) & 0x000fffff - 0x00080000;
         sensor.temperature = (sensor.data >> 11);
-
-        
-    }
+    } */
 
     if (Time.sec > 59)
     {
@@ -168,6 +176,8 @@ void Time_handler(void) //Timer 0 is 50ms period,
     }
     if ((Power.level == 1) && (Time.min >= Time1)) //update timer counter if time drop to 0
     {
+        BUZ_init();
+        Time.beep=1;
         state = Timer_end;
         Display_handler();
         Time.min = 0;
@@ -218,6 +228,7 @@ void Key_handler(void)
 
     //  Timer_Reset();
 
+    Dump_value( Key_pressed);
     if (Key.long_press_state)
     {
 
@@ -225,7 +236,7 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-
+            Display_ring();
             Heating.on = 0;
             break;
         case Key_Vibration:
@@ -253,7 +264,7 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-
+            // Display_ring();
             key_up(&Heating);
 
             break;
@@ -272,7 +283,7 @@ void Key_handler(void)
                 key_up(&Suction);
 
             break;
-        case Key_Power:
+            /*  case Key_Power:
 
             key_up(&Power);
             if (Power.on == 0)
@@ -281,7 +292,7 @@ void Key_handler(void)
                 Power.level = 0;
             }
 
-            break;
+            break; */
 
         default:
             break;
@@ -298,8 +309,7 @@ void IO_handler(void)
 
     //update key status
 
-
-    if (Suction.level == 0)  // if suction is off , release the pressure through valve
+    if (Suction.level == 0) // if suction is off , release the pressure through valve
     {
 
         Valve_open;
@@ -309,37 +319,16 @@ void IO_handler(void)
         Valve_close;
     }
 
-
     if (Power.on)
     {
         IO_Power = 1;
-
-        switch (Power.level)
-        {
-        case 0:
-            Power.level = 1;
-        case 1:
-            duration = Time1;
-
-            break;
-
-        case 2:
-            duration += Time2;
-
-            break;
-        case 3:
-            duration += Time3;
-
-            break;
-
-        default:
-            break;
-        }
     }
 
     else
     {
 
+        BUZ_init();
+        Time.beep = 1;
         state = Timer_end;
     }
 }
@@ -362,4 +351,13 @@ void Display_handler(void)
 
     display(LED2, GIRD2);
     display(LED1, GIRD1);
+}
+
+void Display_ring(void)
+{
+LED1=0b1111111;
+LED2=0b1111111;
+display(LED2,GIRD2);
+display(LED1,GIRD1);
+
 }

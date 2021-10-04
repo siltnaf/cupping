@@ -5,6 +5,7 @@ void main(void)
 {
      #if(Seril_Debug==1) 
 UART1_config();
+
 #endif
 
 

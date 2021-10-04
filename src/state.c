@@ -48,6 +48,7 @@ void state_machine(void)
         }
         else
         {
+       
 
             if (Time.blink == 1)
                 LED1 |= 0b0001000;

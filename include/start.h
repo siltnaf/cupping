@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Seril_Debug 0
+#define Seril_Debug 1
 
 #include "stc12.h"
 #include "8051.h"
@@ -31,11 +31,12 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define IO_PTC P5_5
 #define IO_Vibration P3_0
 #define IO_Valve P3_1
+#define IO_BUZ  P3_2
 
 #define Max_key 4
 
-#define Valve_open        IO_Valve = 0
-#define Valve_close       IO_Valve = 1
+#define Valve_open        IO_Valve = 1
+#define Valve_close       IO_Valve = 0
 
 
 #define Stay_suction  0x80
@@ -52,7 +53,7 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define Med_heat  0x52
 #define High_heat 0x4A
 
-
+#define Hz_max  0    //5 for 10ms which is half period of 50 Hz
 #define Hz_50  32    //5 for 10ms which is half period of 50 Hz
 #define Hz_30  52     //8  for 16ms which is half period of 30Hz
 #define Hz_20  80    //13 for 25 ms which is half period of 20Hz
@@ -138,6 +139,7 @@ typedef struct Timer_Setting
     unsigned char Hzout :1;
     unsigned char blink :1;
     unsigned char error :1;
+    unsigned char beep:1;
 
 } Timer_Status;
 

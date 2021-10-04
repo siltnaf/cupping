@@ -7,11 +7,20 @@ void ParameterReset(void)
 
     //变量初始化
     IO_Pump = 0;
-    IO_Vibration = 0;
-    IO_PTC = 0;
-    IO_Valve = 1;
     IO_Power = 0;
+    IO_BUZ=0;
+    IO_PTC = 0;
 
+#if (Seril_Debug == 1)
+    IO_Valve = 1;
+    IO_Vibration = 1;
+    #else
+    IO_Valve = 0;
+    IO_Vibration = 0;
+#endif
+
+  
+  
     Key.update = 0;
     Key.long_press_state = 0;
 
@@ -27,6 +36,8 @@ void ParameterReset(void)
     Suction.timer = 0;
     Vibration.timer = 0;
     Heating.timer = 0;
+
+    Vibration.duty=100;
 
     Time.sec = 0;
     Time.min = 0;
@@ -60,7 +71,7 @@ void DeviceInit(void)
     TR0 = 0;          //停止计数
     ET0 = 0;          //停止计数中断
 
-    Int0_init();
+   // Int0_init();
     Int1_init();
     Int2_init();
     Int3_init();
@@ -156,6 +167,25 @@ is reloaded, and generates an interrupt.
     AUXR |= 0x04; //定时器时钟1T模式
     T2L = 0xE0;   //设置定时初始值
     T2H = 0xFE;   //设置定时初始值
+    AUXR |= 0x10; //定时器2开始计时
+
+    IE2 |= 0x04; /* Enable Timer 2 Interrupts */
+    AUXR = 0x10; /* Start Timer 2 Running */
+}
+
+
+void BUZ_init(void)
+{
+    /*--------------------------------------
+Set Timer2 for 16-bit auto-reload.
+The timer counts to 0xFFFF, overflows,
+is reloaded, and generates an interrupt.
+--------------------------------------*/
+
+    AUXR |= 0x01; //串口1选择定时器2为波特率发生器
+    AUXR |= 0x04; //定时器时钟1T模式
+    T2L = 0x68;   //设置定时初始值
+    T2H = 0xFF;   //设置定时初始值
     AUXR |= 0x10; //定时器2开始计时
 
     IE2 |= 0x04; /* Enable Timer 2 Interrupts */

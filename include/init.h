@@ -10,7 +10,7 @@ void Int2_init(void);
 void Int3_init(void);
 void Timer0_init(void);
 void Timer2_init(void);
-
+void BUZ_init(void);
 void DeviceInit(void);
 void ParameterReset(void);
 

@@ -20,6 +20,11 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR //150ms period
 
 void PWMTimer(void) __interrupt TIMER2_VECTOR
 {
+    if (Time.beep==1) 
+        {if (IO_BUZ==1) IO_BUZ=0;
+            else IO_BUZ=1;
+        }
+        else IO_BUZ=0;
     Time.PWM = 1;                                       //set PWM trigger
 }
 
@@ -42,10 +47,9 @@ void INT1_int(void) __interrupt INT1_VECTOR //进中断时已经清除标志
 {
 
     
-    if (Key.pressed == 0)                        //if key is previously not holding       
+                      //if key is previously not holding       
         Key_pressed = Key_Pump;
-    else
-        Key_pressed = 0;
+      
     TimeReset();
 
 }
@@ -54,10 +58,10 @@ void INT2_int(void) __interrupt INT2_VECTOR //进中断时已经清除标志
 {
 
 
-    if (Key.pressed == 0)                       //if key is previously not holding 
+                    //if key is previously not holding 
         Key_pressed = Key_Vibration;
-    else
-        Key_pressed = 0;
+        
+   
     TimeReset();
 
 }
@@ -65,12 +69,12 @@ void INT2_int(void) __interrupt INT2_VECTOR //进中断时已经清除标志
 /********************* INT2中断函数 *************************/
 void INT3_int(void) __interrupt INT3_VECTOR //进中断时已经清除标志
 {
-
- 
-    if (Key.pressed == 0)                          //if key is previously not holding  
+   
+                          //if key is previously not holding  
         Key_pressed = Key_PTC;
-    else
-        Key_pressed = 0;
+      
+     
+
 
     TimeReset();
 

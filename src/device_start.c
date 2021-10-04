@@ -53,7 +53,7 @@ void Start(void)
     Key.update = 0;
     Key.long_press_state = 0;
     state = Power_down;
-
+  
     while (1)
     {
       
@@ -63,10 +63,18 @@ void Start(void)
         TR0 = 1;
         ET0 = 1;
 
-       service();
+     //  service();
+
+ 
+         sensor.pressure = HX711_Read(hxsensor->T32) >> 16;
+       //  Dump_ad(HX711_Read(hxsensor->T32)>>8);
+
+
+
 
        if (Time.PWM == 1)
         {
+          
             Time.Hzcount++;
             if (Time.Hzcount < Time.Hzmax)
                 Time.Hzout = 1;
@@ -74,6 +82,8 @@ void Start(void)
                 Time.Hzout = 0;
             if (Time.Hzcount >= (Time.Hzmax << 1))
                 Time.Hzcount = 0;
+
+            if (Time.Hzmax==Hz_max) Time.Hzout=1;
             check_pwm(&Vibration);
             check_pwm(&Heating);
             check_pwm(&Suction);
@@ -84,23 +94,27 @@ void Start(void)
         {
             Time_handler();
             
-           
+          
         }
-
+ 
      
-       
+     IO_Power=0;
 
-        if (Key.update || Key.long_press_state) //按键中断flag;
+        //Display_ring();
+
+         if (Key.update || Key.long_press_state) //按键中断flag;
         {
             EA = 0;
             Key.which_press = Key_pressed;
+        
 
             Key_handler();
-            IO_handler();
-            Display_handler();
+        //    IO_handler();
+           // Display_handler();
+       
         }
  
-        state_machine();
+      //  state_machine(); 
     }
 
     //
