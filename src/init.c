@@ -7,7 +7,7 @@ void ParameterReset(void)
 
     //变量初始化
     IO_Pump = 0;
-    IO_Power = 0;
+    Power_on;
     IO_BUZ=0;
     IO_PTC = 0;
 
@@ -31,7 +31,7 @@ void ParameterReset(void)
     Suction.level = 0;
     Heating.level = 0;
     Vibration.level = 0;
-    Power.level=0;
+   
 
     Suction.timer = 0;
     Vibration.timer = 0;
@@ -71,7 +71,7 @@ void DeviceInit(void)
     TR0 = 0;          //停止计数
     ET0 = 0;          //停止计数中断
 
-   // Int0_init();
+
     Int1_init();
     Int2_init();
     Int3_init();

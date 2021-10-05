@@ -38,6 +38,9 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define Valve_open        IO_Valve = 1
 #define Valve_close       IO_Valve = 0
 
+#define Power_on          IO_Power = 0
+#define Power_off         IO_Power = 1
+
 
 #define Stay_suction  0x80
 #define Low_suction   0x58
@@ -115,9 +118,9 @@ typedef enum Button_type
 typedef enum Treatment_time
 {
     Time0 = 0,
-    Time1 = 5,
-    Time2 = 5,
-    Time3 = 5
+    Time1 = 1,
+    Time2 = 1,
+    Time3 = 1
 
 } Treatment_time;
 
@@ -148,7 +151,7 @@ extern void Dump_value(u8 val);
 
 //初始化按键
 extern Button_Status Key;
-extern Level Power, Vibration, Suction, Heating;
+extern Level Vibration, Suction, Heating;
 extern Button_type Key_pressed;
  
 extern Timer_Status Time;

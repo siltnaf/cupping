@@ -49,7 +49,7 @@ void INT1_int(void) __interrupt INT1_VECTOR //进中断时已经清除标志
     
                       //if key is previously not holding       
         Key_pressed = Key_Pump;
-      
+
     TimeReset();
 
 }
@@ -59,8 +59,8 @@ void INT2_int(void) __interrupt INT2_VECTOR //进中断时已经清除标志
 
 
                     //if key is previously not holding 
-        Key_pressed = Key_Vibration;
-        
+        Key_pressed = Key_PTC;
+       
    
     TimeReset();
 
@@ -71,9 +71,9 @@ void INT3_int(void) __interrupt INT3_VECTOR //进中断时已经清除标志
 {
    
                           //if key is previously not holding  
-        Key_pressed = Key_PTC;
+        Key_pressed = Key_Vibration;
       
-     
+
 
 
     TimeReset();

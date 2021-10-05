@@ -63,7 +63,7 @@ void Start(void)
         TR0 = 1;
         ET0 = 1;
 
-     //  service();
+       service();
 
  
          sensor.pressure = HX711_Read(hxsensor->T32) >> 16;
@@ -98,23 +98,25 @@ void Start(void)
         }
  
      
-     IO_Power=0;
+    
 
-        //Display_ring();
+     
 
          if (Key.update || Key.long_press_state) //按键中断flag;
+        
         {
             EA = 0;
             Key.which_press = Key_pressed;
         
+      
+           Key_handler();
 
-            Key_handler();
-        //    IO_handler();
-           // Display_handler();
+           IO_handler();
+          Display_handler();
        
         }
  
-      //  state_machine(); 
+        state_machine(); 
     }
 
     //

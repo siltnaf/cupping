@@ -162,28 +162,17 @@ void Time_handler(void) //Timer 0 is 50ms period,
     {
         Time.min = 0;
     }
-    if ((Power.level == 3) && (Time.min >= Time3)) //update timer counter if time drop to Time2
-    {
-        Power.level = 2;
-        Time.min = 0;
-        Display_handler(); //refresh display
-    }
-    if ((Power.level == 2) && (Time.min >= Time2)) //update timer counter if time drop to Time1
-    {
-        Power.level = 1;
-        Time.min = 0;
-        Display_handler(); //refresh display
-    }
-    if ((Power.level == 1) && (Time.min >= Time1)) //update timer counter if time drop to 0
+  
+    if (Time.min > Time1)
     {
         BUZ_init();
         Time.beep=1;
         state = Timer_end;
         Display_handler();
-        Time.min = 0;
+      //  Time.min =Time1 ;
     }
 
-    if ((!INT0) || (!INT1) || (!INT2) || (!INT3))
+    if ( (!INT1) || (!INT2) || (!INT3))
     {
         //if one of the key is pressed
 
@@ -226,9 +215,9 @@ void Key_handler(void)
 
 {
 
-    //  Timer_Reset();
+      Timer_Reset();
 
-    Dump_value( Key_pressed);
+  
     if (Key.long_press_state)
     {
 
@@ -236,7 +225,7 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-            Display_ring();
+          
             Heating.on = 0;
             break;
         case Key_Vibration:
@@ -248,12 +237,10 @@ void Key_handler(void)
 
             Suction.on = 0;
             Suction.level = 0;
-
+             state = Timer_end;
+           
             break;
-        case Key_Power:
-
-            Power.on = 0;
-            Power.level = 0;
+        default:
 
             break;
         }
@@ -264,7 +251,7 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-            // Display_ring();
+            
             key_up(&Heating);
 
             break;
@@ -283,16 +270,7 @@ void Key_handler(void)
                 key_up(&Suction);
 
             break;
-            /*  case Key_Power:
-
-            key_up(&Power);
-            if (Power.on == 0)
-            {
-                state = Timer_end;
-                Power.level = 0;
-            }
-
-            break; */
+           
 
         default:
             break;
@@ -319,19 +297,9 @@ void IO_handler(void)
         Valve_close;
     }
 
-    if (Power.on)
-    {
-        IO_Power = 1;
+    
+       
     }
-
-    else
-    {
-
-        BUZ_init();
-        Time.beep = 1;
-        state = Timer_end;
-    }
-}
 
 void Display_handler(void)
 {
@@ -340,12 +308,12 @@ void Display_handler(void)
 
     display_val = (level_val[Vibration.level]) & 0b0000111;
 
-    display_val |= (level_val[Suction.level] << 3) & 0b0111000;
+    display_val |= (level_val[Suction.level] << 4) & 0b1110000;
 
     LED1 = display_val;
 
     display_val = (level_val[Heating.level]) & 0b0000111;
-    display_val |= (level_val[Power.level] << 3) & 0b0111000;
+     display_val |=(0b00000100 << 4) & 0b1110000;
 
     LED2 = display_val;
 

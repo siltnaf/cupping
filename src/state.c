@@ -51,7 +51,7 @@ void state_machine(void)
        
 
             if (Time.blink == 1)
-                LED1 |= 0b0001000;
+                LED1 |= 0b1110000;
             else
                 LED1 &= 0b0000000;
             LED2 = 0b00000000;
@@ -64,12 +64,12 @@ void state_machine(void)
 
     case Power_down:
 
-        DeviceInit();
+     //   DeviceInit();
 
         Key.update = 0;
         Key.pressed = 0;
         Key.debounce = 0;
-         Valve_close; 
+        Valve_close; 
         EA = 1;
         EX1 = 1;
         EX0 = 0;
@@ -80,10 +80,12 @@ void state_machine(void)
 
         WAKE_CLKO |= 0x20;
         WAKE_CLKO |= 0x10;
+     
         EX1 = 1;
         EX0 = 1;
 
-        IO_Power = 1;
+        Power_on;
+         
         LED1 = 0xff;
         LED2 = 0xff;
 
@@ -98,8 +100,11 @@ void state_machine(void)
         display(LED2, GIRD2);
         display(LED1, GIRD1);
 
-        Power.on = 1;
-        Power.level = 1;
+        Power_on;
+        Key.update=0;
+        Key_pressed=0;
+        Suction.on=1;
+        Suction.level=1;
         Valve_close;
         Time.error=1;
 
