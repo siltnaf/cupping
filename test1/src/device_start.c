@@ -75,7 +75,7 @@ Int3_init();
 
 display(0x00,GIRD2);
 
-#if(Seril_Debug==1) 
+#if(Serial_Debug==1) 
 Send1_String("STC15W204S\r\nUart is ok !\r\n");//发送字符串检测是否初始化成功
 Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n");//发送字符串检测是否初始化成功
 #endif
@@ -106,7 +106,7 @@ EA=1;
         copping_button.stat=0;
         copping_button.which_press=Key_pressed;
       
-        #if(Seril_Debug==1) 
+        #if(Serial_Debug==1) 
         //这里定义的数组是将16进制的数转换为字符输出，方便打印调试
         Send1_String("\r\nButton=");//发送按键值
         button_number[0]=copping_button.which_press;
@@ -187,7 +187,7 @@ else
 display(0x00,GIRD1);
 display(0x00,GIRD2);
 }
-#if(Seril_Debug==1) 
+#if(Serial_Debug==1) 
 Send1_String("long_press_state=1\r\n");//发送字符串检测是否初始化成功
 #endif
 

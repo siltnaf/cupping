@@ -3,7 +3,7 @@
 #define MAIN_Fosc 11059200L
 void main(void)
 {
-     #if(Seril_Debug==1) 
+     #if(Serial_Debug==1) 
 UART1_config();
 
 #endif

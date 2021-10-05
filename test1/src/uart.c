@@ -1,6 +1,6 @@
 #include "start.h"
 
- #if(Seril_Debug==1) 
+ #if(Serial_Debug==1) 
 char UAR[20],temp,rec_flag=0;
 //定时器2，波特率9600
 void Uart1_Init(void) //@11.0592MHz

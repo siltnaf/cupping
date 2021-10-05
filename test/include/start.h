@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int	u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Seril_Debug 1
+#define Serial_Debug 1
 
 #include "stc12.h"
 #include "8051.h"
@@ -11,7 +11,7 @@ typedef unsigned int	u16;
 #include "delay.h"
 #include "hx711.h"
 #include "gn1616.h"
-#if(Seril_Debug==1) 
+#if(Serial_Debug==1) 
 #include "uart.h"
 void UART1_Interrupt(void)__interrupt UART1_VECTOR;
 #endif

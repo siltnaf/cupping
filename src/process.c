@@ -3,6 +3,19 @@
 
 unsigned char LED1, LED2;
 
+void release_pressure(void)
+{
+
+  Valve_open;
+        delay_ms(30000);
+        delay_ms(30000);
+        delay_ms(30000);
+        Valve_close;
+
+
+
+}
+
 void Lock_pressure(unsigned char keep_pressure)
 {
 
@@ -59,7 +72,7 @@ void service(void) //background service running all the time
     if (Vibration.on)
     {
         if (Vibration.level == 1) //use Timer2, create 50 HZ pulse
-            Time.Hzmax = Hz_20;
+            Time.Hzmax = Hz_30;
         if (Vibration.level == 2)
             Time.Hzmax = Hz_50; //use Timer2, create 30 HZ pulse
         if (Vibration.level == 3)
@@ -131,8 +144,9 @@ void Time_handler(void) //Timer 0 is 50ms period,
     else
         Time.blink = 0;
 
-    if (Time.count > 19)
+    if (Time.count > 39)
     {
+       
         Time.sec++;
         Time.count = 0;
     }
@@ -163,13 +177,13 @@ void Time_handler(void) //Timer 0 is 50ms period,
         Time.min = 0;
     }
   
-    if (Time.min > Time1)
+    if ((Time.min >= Time1)&& (state!=Timer_end))
     {
         BUZ_init();
         Time.beep=1;
         state = Timer_end;
-        Display_handler();
-      //  Time.min =Time1 ;
+       
+       
     }
 
     if ( (!INT1) || (!INT2) || (!INT3))
@@ -290,11 +304,8 @@ void IO_handler(void)
     if (Suction.level == 0) // if suction is off , release the pressure through valve
     {
 
-        Valve_open;
-        delay_ms(30000);
-        delay_ms(30000);
-        delay_ms(30000);
-        Valve_close;
+        release_pressure();
+        state= Timer_end;
     }
 
     

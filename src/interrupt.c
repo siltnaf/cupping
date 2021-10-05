@@ -20,6 +20,21 @@ void KeyTimer(void) __interrupt TIMER0_VECTOR //150ms period
 
 void PWMTimer(void) __interrupt TIMER2_VECTOR
 {
+   // create 30/50 Hz for vibration
+     Time.Hzcount++;
+            if (Time.Hzcount < Time.Hzmax)
+                Time.Hzout = 1;
+            else
+                Time.Hzout = 0;
+            if (Time.Hzcount >= (Time.Hzmax << 1))
+                Time.Hzcount = 0;
+
+            if (Time.Hzmax == Hz_max)
+                Time.Hzout = 1;
+
+
+
+
     if (Time.beep==1) 
         {if (IO_BUZ==1) IO_BUZ=0;
             else IO_BUZ=1;
@@ -33,13 +48,7 @@ void INT0_int(void) __interrupt INT0_VECTOR //进中断时已经清除标志
 {
 
 
-    if (Key.pressed == 0)                       //if key is previously not holding 
-        Key_pressed = Key_Power;
-    else
-        Key_pressed = 0;
-
-    TimeReset();
-
+   
 }
 
 /********************* INT1中断函数 *************************/

@@ -119,7 +119,7 @@ line level    source
  105          PTC_FLAG=0;
  106          
  107          
- 108          #if(Seril_Debug==1) 
+ 108          #if(Serial_Debug==1) 
               Send1_String("STC15W204S\r\nUart is ok !\r\n");//发送字符串检测是否初始化成功
               Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n");//发送字符串检测是否初始化成功
               #endif
@@ -139,7 +139,7 @@ line level    source
  123                 if(copping_button.stat)//按键中断flag;
  124                 {
  125                  EA=0;
- 126                  #if(Seril_Debug==1) 
+ 126                  #if(Serial_Debug==1) 
                       Send1_String("copping_=1\r\n");//有按键操作发送字符
                       Send1_String("Button\r\n");//发送按键值
                       send1_Byte(copping_button.which_press);
@@ -253,7 +253,7 @@ line level    source
  235          EX1=1;    
  236          
  237          }
- 238          #if(Seril_Debug==1) 
+ 238          #if(Serial_Debug==1) 
 C51 COMPILER V9.60.0.0   DEVICE_START                                                      08/11/2021 21:39:34 PAGE 5   
 
               Send1_String("long_press_state=1\r\n");//发送字符串检测是否初始化成功

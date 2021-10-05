@@ -11,7 +11,7 @@ void ParameterReset(void)
     IO_BUZ=0;
     IO_PTC = 0;
 
-#if (Seril_Debug == 1)
+#if (Serial_Debug == 1)
     IO_Valve = 1;
     IO_Vibration = 1;
     #else
@@ -77,6 +77,12 @@ void DeviceInit(void)
     Int3_init();
     Timer0_init();
 
+#if (Serial_Debug == 0)
+    Timer2_init(); //use timer2 for PWM if UART is not use for debug
+#endif
+
+
+
     sensor.pressure=0xff;
 
     Key.debounce = 0;
@@ -84,9 +90,7 @@ void DeviceInit(void)
     Time.error=1;
     state = Idle_mode;
 
-#if (Seril_Debug == 0)
-    Timer2_init(); //use timer2 for PWM if UART is not use for debug
-#endif
+
 }
 
 void Int0_init(void)

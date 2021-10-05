@@ -39,9 +39,7 @@ void state_machine(void)
             } */
 
 
-            Valve_open;
-           delay_ms(30000);
-            Valve_close;
+            release_pressure();
             IO_Power=0;
             state=Power_down;
 
@@ -70,6 +68,7 @@ void state_machine(void)
         Key.pressed = 0;
         Key.debounce = 0;
         Valve_close; 
+        Power_off;
         EA = 1;
         EX1 = 1;
         EX0 = 0;

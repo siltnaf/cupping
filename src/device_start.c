@@ -45,7 +45,7 @@ void Start(void)
 
     sensor.pressure = HX711_Read(hxsensor->P64);
 
-#if (Seril_Debug == 1)
+#if (Serial_Debug == 1)
     Send1_String("STC15W204S\r\nUart is ok !\r\n");      //发送字符串检测是否初始化成功
     Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n"); //发送字符串检测是否初始化成功
 #endif
@@ -53,38 +53,22 @@ void Start(void)
     Key.update = 0;
     Key.long_press_state = 0;
     state = Power_down;
-  
+
     while (1)
     {
-      
-
 
         EA = 1;
         TR0 = 1;
         ET0 = 1;
 
-       service();
-
+      //    service();
+    
+       sensor.pressure =HX711_Read(hxsensor->P128);
  
-         sensor.pressure = HX711_Read(hxsensor->T32) >> 16;
-       //  Dump_ad(HX711_Read(hxsensor->T32)>>8);
+          Dump_ad(sensor.pressure);
 
-
-
-
-       if (Time.PWM == 1)
+       /*  if (Time.PWM == 1)
         {
-          
-            Time.Hzcount++;
-            if (Time.Hzcount < Time.Hzmax)
-                Time.Hzout = 1;
-            else
-                Time.Hzout = 0;
-            if (Time.Hzcount >= (Time.Hzmax << 1))
-                Time.Hzcount = 0;
-
-            if (Time.Hzmax==Hz_max) Time.Hzout=1;
-            check_pwm(&Vibration);
             check_pwm(&Heating);
             check_pwm(&Suction);
             Time.PWM = 0;
@@ -93,30 +77,21 @@ void Start(void)
         if (Time.update)
         {
             Time_handler();
-            
-          
         }
- 
-     
-    
-
-     
 
          if (Key.update || Key.long_press_state) //按键中断flag;
-        
+
         {
             EA = 0;
             Key.which_press = Key_pressed;
-        
-      
-           Key_handler();
 
-           IO_handler();
-          Display_handler();
-       
+            Key_handler();
+
+            IO_handler();
+            Display_handler();
         }
- 
-        state_machine(); 
+
+        state_machine();  */
     }
 
     //
