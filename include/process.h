@@ -5,7 +5,7 @@
 
 void Time_handler(void);
 void Key_handler(void);
-void IO_handler(void);
+void Key_Setting_handler(void);
 void Display_handler(void);
 void Display_ring(void);
 void service(void);

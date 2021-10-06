@@ -6,14 +6,11 @@ unsigned char LED1, LED2;
 void release_pressure(void)
 {
 
-  Valve_open;
-        delay_ms(30000);
-        delay_ms(30000);
-        delay_ms(30000);
-        Valve_close;
-
-
-
+    Valve_open;
+    delay_ms(30000);
+    delay_ms(30000);
+    delay_ms(30000);
+    Valve_close;
 }
 
 void Lock_pressure(unsigned char keep_pressure)
@@ -40,27 +37,33 @@ void service(void) //background service running all the time
 
 {
 
+volatile signed char delta;
+unsigned char target_temperature[4] = {0,Low_heat, Med_heat, High_heat};
+
+
     if (Heating.on)
     {
-        if (Heating.level == 1) //set duty for heating PTC power
-            if (sensor.temperature < Low_heat)
-                Heating.duty = 20;
-            else
-                Heating.duty = 100;
+        if (sensor.update_heating_PWM == 1)
+        {
 
-        if (Heating.level == 2)
-            if (sensor.temperature < Med_heat)
-                Heating.duty = 20;
-            else
-                Heating.duty = 100;
-
-        if (Heating.level == 3)
-            if (sensor.temperature < High_heat)
-                Heating.duty = 20;
-            else
-                Heating.duty = 100;
-
+            
+                delta=sensor.temperature-target_temperature[Heating.level];
+             
+        
+                    Heating.duty += delta >> 1;
+                
+            
+                    
+                    if (Heating.duty > 99)
+                        Heating.duty = 100;
+                    if (Heating.duty<20)
+                        Heating.duty=20;
+                
+            
+           
+        }
         IO_PTC = Heating.output;
+        sensor.update_heating_PWM = 0;
     }
 
     else
@@ -69,7 +72,7 @@ void service(void) //background service running all the time
         Heating.level = 0;
     }
 
-    if (Vibration.on)
+     if (Vibration.on)
     {
         if (Vibration.level == 1) //use Timer2, create 50 HZ pulse
             Time.Hzmax = Hz_30;
@@ -77,13 +80,11 @@ void service(void) //background service running all the time
             Time.Hzmax = Hz_50; //use Timer2, create 30 HZ pulse
         if (Vibration.level == 3)
             Time.Hzmax = Hz_max; //use Timer2, create 20 HZ pulse
-
-        IO_Vibration = Time.Hzout;
     }
 
     else
     {
-        IO_Vibration = 0; // if Vibration is off , reset the level to 0
+
         Vibration.level = 0;
     }
 
@@ -125,7 +126,7 @@ void service(void) //background service running all the time
         Time.beep = 0;
         Timer2_init();
     }
-}
+} 
 
 void Timer_Reset(void)
 {
@@ -146,26 +147,35 @@ void Time_handler(void) //Timer 0 is 50ms period,
 
     if (Time.count > 39)
     {
-       
+
         Time.sec++;
         Time.count = 0;
     }
 
-   /*  if ((Time.sec % 4 == 0) && (Time.count == 10))
-        HX711_Read(hxsensor->P64);
+    if ((Time.count==0))
+        HX711_Read(hxsensor->P128);
+        if (Time.count==10)
+        {
+        sensor.raw_pressure = (HX711_Read(hxsensor->P128) ^ 0x00800000);
+        sensor.pressure = sensor.raw_pressure >> 12;
+        sensor.update_suction_PWM = 1;
+         Dump_value(sensor.pressure);     
+        }
+  
+        
 
-    if ((Time.sec % 4 == 1) && (Time.count == 10))
-        sensor.pressure = HX711_Read(hxsensor->P64) >> 16;
+    if (Time.count==20)
+            HX711_Read(hxsensor->T32);
 
-    if ((Time.sec % 4 == 2) && (Time.count == 10))
-        HX711_Read(hxsensor->T32);
+    if (Time.count==39)        
+        {
+   
+        sensor.raw_temperature = (HX711_Read(hxsensor->T32) ^ 0x00800000);
 
-    if ((Time.sec % 4 == 3) && (Time.count == 10))
-
-    {
-        sensor.data = HX711_Read(hxsensor->T32) & 0x000fffff - 0x00080000;
-        sensor.temperature = (sensor.data >> 11);
-    } */
+        sensor.temperature = sensor.raw_temperature >> 16;
+        sensor.update_heating_PWM = 1;
+         Dump_value(sensor.temperature);
+        }
 
     if (Time.sec > 59)
     {
@@ -176,17 +186,15 @@ void Time_handler(void) //Timer 0 is 50ms period,
     {
         Time.min = 0;
     }
-  
-    if ((Time.min >= Time1)&& (state!=Timer_end))
+
+    if ((Time.min >= Time1) && (state != Timer_end))
     {
         BUZ_init();
-        Time.beep=1;
+        Time.beep = 1;
         state = Timer_end;
-       
-       
     }
 
-    if ( (!INT1) || (!INT2) || (!INT3))
+    if ((!INT1) || (!INT2) || (!INT3))
     {
         //if one of the key is pressed
 
@@ -229,9 +237,8 @@ void Key_handler(void)
 
 {
 
-      Timer_Reset();
+    Timer_Reset();
 
-  
     if (Key.long_press_state)
     {
 
@@ -239,7 +246,7 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-          
+
             Heating.on = 0;
             break;
         case Key_Vibration:
@@ -251,8 +258,8 @@ void Key_handler(void)
 
             Suction.on = 0;
             Suction.level = 0;
-             state = Timer_end;
-           
+            state = Timer_end;
+
             break;
         default:
 
@@ -265,7 +272,7 @@ void Key_handler(void)
         {
 
         case Key_PTC:
-            
+
             key_up(&Heating);
 
             break;
@@ -284,7 +291,6 @@ void Key_handler(void)
                 key_up(&Suction);
 
             break;
-           
 
         default:
             break;
@@ -294,7 +300,7 @@ void Key_handler(void)
     Key.long_press_state = 0;
 }
 
-void IO_handler(void)
+void Key_Setting_handler(void)
 {
 
     service(); //update key status
@@ -305,12 +311,12 @@ void IO_handler(void)
     {
 
         release_pressure();
-        state= Timer_end;
+        state = Timer_end;
     }
 
-    
-       
-    }
+    if (Heating.level != 0)
+        Heating.duty = 50;
+}
 
 void Display_handler(void)
 {
@@ -324,7 +330,7 @@ void Display_handler(void)
     LED1 = display_val;
 
     display_val = (level_val[Heating.level]) & 0b0000111;
-     display_val |=(0b00000100 << 4) & 0b1110000;
+    display_val |= (0b00000100 << 4) & 0b1110000;
 
     LED2 = display_val;
 
@@ -334,9 +340,8 @@ void Display_handler(void)
 
 void Display_ring(void)
 {
-LED1=0b1111111;
-LED2=0b1111111;
-display(LED2,GIRD2);
-display(LED1,GIRD1);
-
+    LED1 = 0b1111111;
+    LED2 = 0b1111111;
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
 }

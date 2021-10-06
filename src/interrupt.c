@@ -33,7 +33,10 @@ void PWMTimer(void) __interrupt TIMER2_VECTOR
                 Time.Hzout = 1;
 
 
-
+    
+#if (Serial_Debug == 0)
+    if (Vibration.on) IO_Vibration=Time.Hzout;else IO_Vibration=0;
+#endif
 
     if (Time.beep==1) 
         {if (IO_BUZ==1) IO_BUZ=0;

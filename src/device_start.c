@@ -61,13 +61,9 @@ void Start(void)
         TR0 = 1;
         ET0 = 1;
 
-      //    service();
-    
-       sensor.pressure =HX711_Read(hxsensor->P128);
- 
-          Dump_ad(sensor.pressure);
+        service();
 
-       /*  if (Time.PWM == 1)
+        if (Time.PWM == 1)
         {
             check_pwm(&Heating);
             check_pwm(&Suction);
@@ -79,19 +75,18 @@ void Start(void)
             Time_handler();
         }
 
-         if (Key.update || Key.long_press_state) //按键中断flag;
+        if (Key.update || Key.long_press_state) //按键中断flag;
 
         {
             EA = 0;
             Key.which_press = Key_pressed;
 
             Key_handler();
-
-            IO_handler();
+            Key_Setting_handler();
             Display_handler();
         }
 
-        state_machine();  */
+        state_machine();
     }
 
     //

@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Serial_Debug 1
+#define Serial_Debug 0
 
 #include "stc12.h"
 #include "8051.h"
@@ -52,9 +52,9 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define upper_bound 0x08
 #define suction_release 0x8a
 
-#define Low_heat  0x58
-#define Med_heat  0x52
-#define High_heat 0x4A
+#define Low_heat  (0x5a)
+#define Med_heat  (0x58)
+#define High_heat (0x55)
 
 #define Hz_max  0    //5 for 10ms which is half period of 50 Hz
 #define Hz_50  32    //5 for 10ms which is half period of 50 Hz
@@ -64,9 +64,12 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 //Sensor_init
 typedef struct HTI_sensor
 {
+unsigned long raw_pressure;
+unsigned long raw_temperature;
 unsigned char pressure;
 unsigned char temperature;
-unsigned long data;
+unsigned char update_suction_PWM:1;
+unsigned char update_heating_PWM:1;
 unsigned char pressure_inrange:1;
 unsigned char temperature_inrange:1;
 }AD_sensor;
@@ -118,7 +121,7 @@ typedef enum Button_type
 typedef enum Treatment_time
 {
     Time0 = 0,
-    Time1 = 1,
+    Time1 = 5,
     Time2 = 1,
     Time3 = 1
 
