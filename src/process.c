@@ -6,6 +6,7 @@ unsigned char LED1, LED2;
 void release_pressure(void)
 {
 
+    Display_handler();
     Valve_open;
     delay_ms(30000);
     delay_ms(30000);
@@ -126,6 +127,11 @@ unsigned char target_temperature[4] = {0,Low_heat, Med_heat, High_heat};
         Time.beep = 0;
         Timer2_init();
     }
+
+    if (Battery.on==1)
+        Battery.level=3;
+        else Battery.level=0;
+
 } 
 
 void Timer_Reset(void)
@@ -147,6 +153,21 @@ void Time_handler(void) //Timer 0 is 50ms period,
 
     if (Time.count > 39)
     {
+        //check battery level every second
+
+        P1M1 |=0b00000100;     //P1.2 change to input
+        if ((BAT_check==1)&& (Battery.level!=1))
+            {
+
+                Battery.level=1;
+
+            }
+
+        if ((BAT_check==0)&& (Battery.level!=3))
+            {
+                Battery.level=3;
+            }
+        P1M1 &=0b11111011;
 
         Time.sec++;
         Time.count = 0;
@@ -167,7 +188,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
     if (Time.count==20)
             HX711_Read(hxsensor->T32);
 
-    if (Time.count==39)        
+    if (Time.count==30)        
         {
    
         sensor.raw_temperature = (HX711_Read(hxsensor->T32) ^ 0x00800000);
@@ -282,12 +303,12 @@ void Key_handler(void)
 
             break;
         case Key_Pump:
-            if (state == Timer_end)
+             if (state == Timer_end)
             {
                 Suction.on = 0;
                 Suction.level = 0;
             }
-            else
+            else 
                 key_up(&Suction);
 
             break;
@@ -321,6 +342,7 @@ void Key_Setting_handler(void)
 void Display_handler(void)
 {
     u8 level_val[Max_key] = {0, 1, 3, 7};
+    u8 level_val2[Max_key]={0,1,2,4};
     u8 display_val = 0;
 
     display_val = (level_val[Vibration.level]) & 0b0000111;
@@ -330,7 +352,7 @@ void Display_handler(void)
     LED1 = display_val;
 
     display_val = (level_val[Heating.level]) & 0b0000111;
-    display_val |= (0b00000100 << 4) & 0b1110000;
+    display_val |= (level_val2[Battery.level] << 4) & 0b1110000;
 
     LED2 = display_val;
 

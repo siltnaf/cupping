@@ -33,6 +33,8 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define IO_Valve P3_1
 #define IO_BUZ  P3_2
 
+#define BAT_check P1_2
+
 #define Max_key 4
 
 #define Valve_open        IO_Valve = 1
@@ -154,7 +156,7 @@ extern void Dump_value(u8 val);
 
 //初始化按键
 extern Button_Status Key;
-extern Level Vibration, Suction, Heating;
+extern Level Vibration, Suction, Heating, Battery;
 extern Button_type Key_pressed;
  
 extern Timer_Status Time;

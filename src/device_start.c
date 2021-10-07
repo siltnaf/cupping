@@ -3,7 +3,7 @@
 
 Button_type Key_pressed;
 Button_Status Key; //初始化按键
-Level Power, Vibration, Suction, Heating;
+Level Power, Vibration, Suction, Heating, Battery;
 
 Timer_Status Time;
 Treatment_time duration;

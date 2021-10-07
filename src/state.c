@@ -18,6 +18,7 @@ void state_machine(void)
         break;
 
     case Timer_end:
+    
         Heating.on = 0;
         Vibration.on = 0;
         if (Time.error==1) state=Power_down;
@@ -104,6 +105,7 @@ void state_machine(void)
         Key_pressed=0;
         Suction.on=1;
         Suction.level=1;
+        Battery.on=1;
         Valve_close;
         Time.error=1;
 
