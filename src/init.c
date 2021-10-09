@@ -90,7 +90,7 @@ void DeviceInit(void)
     Key.debounce = 0;
     Key.update = 0;
     Time.error=1;
-    state = Idle_mode;
+    state = Normal_mode;
 
 
 }

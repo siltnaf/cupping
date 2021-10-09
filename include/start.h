@@ -32,7 +32,7 @@ void UART1_Interrupt(void) __interrupt UART1_VECTOR;
 #define IO_Vibration P3_0
 #define IO_Valve P3_1
 #define IO_BUZ  P3_2
-
+#define KEY_INT1 P3_3
 #define BAT_check P1_2
 
 #define Max_key 4

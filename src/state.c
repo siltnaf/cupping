@@ -8,29 +8,49 @@ void state_machine(void)
 
     switch (state)
     {
-    case Idle_mode:
-            Valve_close;
-        state = Idle_mode;
+    case Normal_mode:
+        Valve_close;
+        Battery.level = 3;
+        Display_handler();
+        state = Normal_mode;
         break;
 
-    case Breathe_mode:
-        state = Breathe_mode;
+    case Charging_mode:
+
+        EA = 0;
+        Battery.level = 1;
+        LED1 = 0x00;
+        LED2 = 0b0010000;
+        display(LED2, GIRD2);
+        display(LED1, GIRD1);
+
+        P1M1 |= 0b00000100; //P1.2 change to input
+        NOP();
+        NOP();
+        NOP();
+        NOP();
+
+        while (BAT_check)
+            ;
+
+        state = Normal_mode;
         break;
 
     case Timer_end:
-    
-        Heating.on = 0;
-        Vibration.on = 0;
-        if (Time.error==1) state=Power_down;
-        Lock_pressure(Stay_suction);
-        if ((Suction.level == 0)&&(Time.error==0)) // if suction is off , release the pressure through valve
-        {
-            IO_Power = 1;
-            LED1 = 0;
-            LED2 = 0;
-            display(LED1, GIRD1);
-            display(LED2, GIRD2);
-          /*   if (sensor.pressure < suction_release)
+            EA=0;
+            Heating.on = 0;
+            Vibration.on = 0;
+            if (Time.error == 1)
+                state = Power_down;
+            Lock_pressure(Stay_suction);
+            if ((Suction.level == 0) && (Time.error == 0)) // if suction is off , release the pressure through valve
+            {
+                IO_Power = 1;
+                LED1 = 0;
+                LED2 = 0;
+                display(LED1, GIRD1);
+                display(LED2, GIRD2);
+                /*   if (sensor.pressure < suction_release)
                 Valve_open;
             else
             {
@@ -39,15 +59,13 @@ void state_machine(void)
                 state = Power_down;
             } */
 
-
-            release_pressure();
-            IO_Power=0;
-            state=Power_down;
-
-        }
+                release_pressure();
+                IO_Power = 0;
+                state = Power_down;
+            }
+        
         else
         {
-       
 
             if (Time.blink == 1)
                 LED1 |= 0b1110000;
@@ -58,21 +76,25 @@ void state_machine(void)
             display(LED2, GIRD2);
 
         } //blind LED
-
+        
         break;
 
     case Power_down:
 
-     //   DeviceInit();
+        //   DeviceInit();
 
         Key.update = 0;
         Key.pressed = 0;
         Key.debounce = 0;
-        Valve_close; 
+        Valve_close;
         Power_off;
+        while (KEY_INT1==0);
+        
         EA = 1;
         EX1 = 1;
         EX0 = 0;
+      
+
         //disable other key interrupt
         WAKE_CLKO &= 0xef; //disable other key interrupt
         WAKE_CLKO &= 0xdf; //disable other key interrupt
@@ -80,36 +102,27 @@ void state_machine(void)
 
         WAKE_CLKO |= 0x20;
         WAKE_CLKO |= 0x10;
-     
+
         EX1 = 1;
         EX0 = 1;
 
         Power_on;
-         
-        LED1 = 0xff;
-        LED2 = 0xff;
 
-        display(LED2, GIRD2);
-        display(LED1, GIRD1);
+       Display_on();
 
         delay_ms(30000);
-
-        LED1 = 0x00;
-        LED2 = 0x00;
-
-        display(LED2, GIRD2);
-        display(LED1, GIRD1);
+        Display_off();
 
         Power_on;
-        Key.update=0;
-        Key_pressed=0;
-        Suction.on=1;
-        Suction.level=1;
-        Battery.on=1;
+        Key.update = 0;
+        Key_pressed = 0;
+        Suction.on = 1;
+        Suction.level = 1;
+        Battery.on = 1;
         Valve_close;
-        Time.error=1;
+        Time.error = 1;
 
-        state = Idle_mode;
+        state = Normal_mode;
         break;
 
     default:

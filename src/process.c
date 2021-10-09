@@ -119,6 +119,7 @@ unsigned char target_temperature[4] = {0,Low_heat, Med_heat, High_heat};
     if (Time.beep == 1)
 
     {
+        BUZ_init();
         delay_ms(30000);
         Time.beep = 0;
         delay_ms(30000);
@@ -131,6 +132,22 @@ unsigned char target_temperature[4] = {0,Low_heat, Med_heat, High_heat};
     if (Battery.on==1)
         Battery.level=3;
         else Battery.level=0;
+
+
+        //check battery status
+    P1M1 |=0b00000100;     //P1.2 change to input
+        NOP();
+        NOP();
+        NOP();
+        NOP();
+        if (BAT_check==1)
+            {
+
+                state=Charging_mode;
+               
+            }
+
+      P1M1 &=0b11111011;
 
 } 
 
@@ -155,19 +172,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
     {
         //check battery level every second
 
-        P1M1 |=0b00000100;     //P1.2 change to input
-        if ((BAT_check==1)&& (Battery.level!=1))
-            {
-
-                Battery.level=1;
-
-            }
-
-        if ((BAT_check==0)&& (Battery.level!=3))
-            {
-                Battery.level=3;
-            }
-        P1M1 &=0b11111011;
+       
 
         Time.sec++;
         Time.count = 0;
@@ -212,6 +217,7 @@ void Time_handler(void) //Timer 0 is 50ms period,
     {
         BUZ_init();
         Time.beep = 1;
+        Time.min=0;
         state = Timer_end;
     }
 
@@ -279,6 +285,15 @@ void Key_handler(void)
 
             Suction.on = 0;
             Suction.level = 0;
+           
+        LED1 = 0x00;
+        LED2 = 0b1000000;
+        display(LED2, GIRD2);
+        display(LED1, GIRD1);
+
+
+
+            while (KEY_INT1==0);
             state = Timer_end;
 
             break;
@@ -336,7 +351,7 @@ void Key_Setting_handler(void)
     }
 
     if (Heating.level != 0)
-        Heating.duty = 50;
+        Heating.duty = 100;
 }
 
 void Display_handler(void)
@@ -360,10 +375,19 @@ void Display_handler(void)
     display(LED1, GIRD1);
 }
 
-void Display_ring(void)
+void Display_on(void)
 {
     LED1 = 0b1111111;
     LED2 = 0b1111111;
     display(LED2, GIRD2);
     display(LED1, GIRD1);
 }
+
+void Display_off(void)
+{
+    LED1 = 0x00;
+    LED2 = 0x00;
+    display(LED2, GIRD2);
+    display(LED1, GIRD1);
+}
+

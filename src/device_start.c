@@ -57,11 +57,15 @@ void Start(void)
     while (1)
     {
 
-        EA = 1;
+        if (state!=Power_down) EA = 1;
         TR0 = 1;
         ET0 = 1;
 
-        service();
+
+    
+
+
+         service();
 
         if (Time.PWM == 1)
         {
@@ -86,7 +90,7 @@ void Start(void)
             Display_handler();
         }
 
-        state_machine();
+        state_machine(); 
     }
 
     //
