@@ -37,20 +37,17 @@ void state_machine(void)
         break;
 
     case Timer_end:
-            EA=0;
-            Heating.on = 0;
-            Vibration.on = 0;
-            if (Time.error == 1)
-                state = Power_down;
-            Lock_pressure(Stay_suction);
-            if ((Suction.level == 0) && (Time.error == 0)) // if suction is off , release the pressure through valve
-            {
-                IO_Power = 1;
-                LED1 = 0;
-                LED2 = 0;
-                display(LED1, GIRD1);
-                display(LED2, GIRD2);
-                /*   if (sensor.pressure < suction_release)
+        EA = 0;
+        Heating.on = 0;
+        Vibration.on = 0;
+        if (Time.error == 1)
+            state = Power_down;
+        Lock_pressure(Stay_suction);
+        if ((Suction.level == 0) && (Time.error == 0)) // if suction is off , release the pressure through valve
+        {
+            IO_Power = 1;
+            Display_off();
+            /*   if (sensor.pressure < suction_release)
                 Valve_open;
             else
             {
@@ -59,11 +56,11 @@ void state_machine(void)
                 state = Power_down;
             } */
 
-                release_pressure();
-                IO_Power = 0;
-                state = Power_down;
-            }
-        
+            release_pressure();
+            IO_Power = 0;
+            state = Power_down;
+        }
+
         else
         {
 
@@ -76,7 +73,7 @@ void state_machine(void)
             display(LED2, GIRD2);
 
         } //blind LED
-        
+
         break;
 
     case Power_down:
@@ -88,12 +85,14 @@ void state_machine(void)
         Key.debounce = 0;
         Valve_close;
         Power_off;
-        while (KEY_INT1==0);
-        
+        while (KEY_INT1 == 0)
+            ;
+
+        Display_off();
+
         EA = 1;
         EX1 = 1;
         EX0 = 0;
-      
 
         //disable other key interrupt
         WAKE_CLKO &= 0xef; //disable other key interrupt
@@ -108,7 +107,7 @@ void state_machine(void)
 
         Power_on;
 
-       Display_on();
+        Display_on();
 
         delay_ms(30000);
         Display_off();
