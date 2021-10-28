@@ -38,6 +38,7 @@ void Start(void)
     DeviceInit();
 
     //hx711通道初始化
+
     hx711channel.P128 = 24; //A通道128
     hx711channel.T32 = 25;  //B通道32
     hx711channel.P64 = 26;  //A通道64
@@ -83,8 +84,9 @@ void Start(void)
 
         {
             EA = 0;
+            
             Key.which_press = Key_pressed;
-
+            
             Key_handler();
             Key_Setting_handler();
             Display_handler();
