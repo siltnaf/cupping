@@ -3,7 +3,7 @@
 typedef unsigned char u8;
 typedef unsigned int	u16;
 #define MAIN_Fosc 11059200L //晶振频率，每秒
-#define Serial_Debug 1
+
 
 #include "stc12.h"
 #include "8051.h"

@@ -83,7 +83,7 @@ Int3_init();
 
 display(0x00,GIRD2);
 
-#if(Serial_Debug==1) 
+#ifndef Serial_Debug
 Send1_String("STC15W204S\r\nUart is ok !\r\n");//发送字符串检测是否初始化成功
 Send1_String("gn1616_start\r\ndelay_ms(1000)!\r\n");//发送字符串检测是否初始化成功
 #endif
